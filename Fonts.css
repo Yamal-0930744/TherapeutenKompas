@@ -97,3 +97,48 @@ p {
 .text-dark-blue {
   color: #0F172A !important;
 }
+
+/* Tablet / kleinere laptop (tussen mobiel en desktop) */
+@media (max-width: 1080px) and (min-width: 769px) {
+  h1 {
+    font-size: 60px;
+  }
+  h2 {
+    font-size: 36px;
+  }
+  h3 {
+    font-size: 24px;
+  }
+  h4 {
+    font-size: 16px;
+  }
+  h5 {
+    font-size: 18px;
+  }
+  p {
+    font-size: 16px;
+  }
+}
+
+/* Responsive font sizes voor mobiel */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 26px;
+    margin-left: 0; /* margin-left weghalen voor kleine schermen */
+  }
+  h2 {
+    font-size: 24px;
+  }
+  h3 {
+    font-size: 20px;
+  }
+  h4 {
+    font-size: 14px;
+  }
+  h5 {
+    font-size: 16px;
+  }
+  p {
+    font-size: 14px;
+  }
+}

@@ -30,7 +30,7 @@ body, html {
 
 .snap-section {
   scroll-snap-align: start;
-  height: 100vh;
+  height: auto;
   display: flex;
   flex-direction: column;
   justify-content: center; /* centers smaller content */
@@ -170,12 +170,15 @@ body, html {
   );
   z-index: 2;
 }
+/* Grote schermen: max 25vh, features naast elkaar */
 .features {
   background-color: #e1f4f7;
   padding: 60px 40px;
   max-width: 100vw;
   margin: 0 auto;
   max-height: 25vh;
+  display: flex;
+  align-items: center;
 }
 
 .features-container {
@@ -184,8 +187,8 @@ body, html {
   align-items: flex-start;
   flex-wrap: wrap;
   gap: 160px;
-  margin-top: 10px;
-  margin-left: 5vw;
+  width: 100%;
+  margin-left: 100px;
 }
 
 .feature {
@@ -469,9 +472,7 @@ video {
   margin-top: 5vh;
 }
 
-
 .stacked-features-section {
-  height: 100vh;
   background-color: #ffffff;
   display: flex;
   justify-content: center;
@@ -708,4 +709,359 @@ video {
   font-size: 0.8rem;
   color: #e8e8e8;
   margin-top: 30px;
+}
+
+@media (max-width: 1200px) {
+  /* Iets minder breedte voor containers */
+  .hero-content,
+  .visibility-container,
+  .testimonials-container,
+  .stacked-features-container {
+    max-width: 90%;
+  }
+}
+
+@media (max-width: 1080px) {
+  /* Features section: van horizontaal naar verticaal op smalle schermen */
+  .features-container {
+    flex-direction: column;
+    gap: 40px; /* wat meer ruimte tussen de features */
+    margin-left: 0; /* evt linksmargin resetten */
+    align-items: center; /* centreren */
+  }
+
+  .feature {
+    max-width: 100%;
+    flex: none;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .feature img {
+    margin: 0 auto 20px; /* centreren van icon */
+  }
+
+  .feature-text {
+    text-align: center;
+  }
+
+  /* Stacked features aanpassen */
+  .stacked-features-container {
+    max-width: 90vw;
+    gap: 30px;
+    flex-direction: column;
+  }
+
+  .stacked-feature {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .feature-image {
+    width: 100%;
+    max-width: 240px; /* iets kleiner */
+    height: auto;
+  }
+
+  .feature-content {
+    text-align: center;
+  }
+
+  .feature-content h3 {
+    font-size: 20px;
+  }
+
+  .feature-content p {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Schakel parallax uit */
+  .how-it-works-section,
+  .video-parallax-section {
+    background-attachment: scroll;
+  }
+
+  /* Maak flex-containers kolommen ipv rijen */
+  .features-container,
+  .visibility-container,
+  .testimonials-container,
+  .stacked-features-container {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* Maak flex-items 100% breed */
+  .feature,
+  .testimonial-card,
+  .stacked-feature {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+
+  /* Kleinere padding en fontgroottes */
+  body, html {
+    font-size: 16px;
+  }
+  .hero-content h1,
+  .visibility-text h2,
+  .testimonial-text {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Voor echt kleine schermen: volledige breedte buttons */
+  .btn,
+  .testimonial-btn {
+    width: 100%;
+  }
+
+  /* Minder padding */
+  .hero-content,
+  .visibility-container,
+  .testimonials-container {
+    padding: 0 1rem;
+  }
+}
+
+@media (max-width: 1280px) {
+  .stacked-features-section {
+    height: auto; /* zodat de hoogte meegroeit met content */
+    padding: 20px 15px;
+  }
+
+  .stacked-features-container {
+    max-width: 90vw; /* container wordt breder op kleinere schermen */
+  }
+
+  .stacked-feature {
+    flex-direction: column; /* afbeelding en tekst onder elkaar */
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .feature-image {
+    width: 100%;
+    height: auto;
+    max-width: 300px; /* behoud max breedte */
+    display: block;
+    margin: 0 auto; /* horizontaal centreren */
+  }
+
+  .feature-content h3 {
+    font-size: 20px; /* iets kleiner voor betere leesbaarheid */
+  }
+
+  .feature-content p {
+    font-size: 14px;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1440px) {
+  .stacked-features-container {
+    flex-direction: row !important;  /* Forceren dat het row is */
+    justify-content: space-between !important;
+    max-width: 90vw !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+    gap: 20px !important;
+    flex-wrap: nowrap !important; /* zorg dat ze naast elkaar blijven */
+  }
+
+  .stacked-feature {
+    flex-direction: column !important; /* afbeelding boven tekst */
+    align-items: center !important;   /* horizontaal centreren */
+    text-align: center !important;
+    max-width: 320px !important;
+    gap: 15px !important;
+  }
+
+  .feature-image {
+    width: 100% !important;
+    max-width: 320px !important;
+    height: auto !important;
+    margin: 0 auto !important;
+  }
+
+  .feature-content {
+    flex: unset !important; /* zorg dat tekst niet uitrekt */
+  }
+
+  .feature-content h3,
+  .feature-content p,
+  .feature-label {
+    text-align: center !important;
+  }
+}
+
+
+/* Basis voor grotere schermen blijft hetzelfde */
+
+/* Laptop 15 inch (max 1440px) */
+@media (max-width: 1440px) {
+  .visibility-container {
+    max-width: 90vw; /* iets smaller op laptop */
+    gap: 40px;       /* wat minder ruimte tussen tekst en afbeelding */
+  }
+
+  .visibility-text {
+    flex: 1 1 65%;  /* iets smaller tekstgebied */
+  }
+
+  .visibility-image {
+    flex: 1 1 30%;  /* iets smaller afbeelding */
+    justify-content: center; /* centreren op laptop */
+  }
+
+  .visibility-image img {
+    max-height: 80%;
+  }
+}
+
+/* Tablets en kleine laptops (max 1024px) */
+@media (max-width: 1024px) {
+  .visibility-container {
+    flex-direction: column;
+    align-items: center;
+    max-width: 95vw;
+    gap: 30px;
+  }
+
+  .visibility-text,
+  .visibility-image {
+    flex: 1 1 100%;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .visibility-text h2 {
+    font-size: 36px;
+  }
+
+  .visibility-text p,
+  .visibility-text .subheading {
+    font-size: 14px;
+  }
+
+  .visibility-image img {
+    max-height: 300px;
+    width: auto;
+  }
+}
+
+/* Mobiel (max 768px) */
+@media (max-width: 768px) {
+  .visibility-text h2 {
+    font-size: 28px;
+  }
+
+  .visibility-text p,
+  .visibility-text .subheading {
+    font-size: 13px;
+  }
+
+  .visibility-image img {
+    max-height: 200px;
+  }
+}
+
+/* Extra klein mobiel (max 480px) */
+@media (max-width: 480px) {
+  .visibility-text h2 {
+    font-size: 22px;
+  }
+
+  .visibility-text p,
+  .visibility-text .subheading {
+    font-size: 12px;
+  }
+
+  .visibility-image img {
+    max-height: 150px;
+  }
+}
+
+/* Tot 1024px: stacked layout, zonder max-height beperking */
+@media screen and (max-width: 1024px) {
+  .features {
+    max-height: none; /* laat de hoogte meegroeien met de content */
+    padding: 40px 20px;
+    display: block; /* verbreekt horizontale flex align */
+        min-height: 60vh !important;
+    max-height: none !important;
+  }
+
+  .features-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 80px;
+    margin-left: 0;
+    margin-top: 80px;
+    margin-bottom: -80px;
+  }
+
+  .feature {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    max-width: 600px;
+    width: 90%;
+    gap: 16px;
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .feature i {
+    margin-right: 20px;
+  }
+
+  .feature-text {
+    text-align: left;
+  }
+}
+@media screen and (max-width: 600px) {
+  .features {
+    height: auto !important;
+    min-height: 60vh !important;
+    max-height: none !important;
+    padding: 40px 20px 20px;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+  }
+
+  .features-container {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 32px !important;
+    margin-left: 0 !important;
+    width: 100%;
+     margin-top: 30px;
+  }
+
+  .feature {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .feature i {
+    margin-bottom: 12px !important;
+    margin-right: 0 !important;
+  }
+
+  .feature-text {
+    text-align: center !important;
+  }
+
+  .snap-section {
+    height: auto !important;
+    scroll-snap-align: unset !important;
+  }
 }
