@@ -1065,3 +1065,31 @@ video {
     scroll-snap-align: unset !important;
   }
 }
+
+@media (max-width: 1024px) {
+  .visibility-section {
+    height: auto !important;
+    padding-top: 60px;
+    padding-bottom: 60px;
+    flex-direction: column !important;
+  }
+
+  .visibility-container {
+    margin-top: 0 !important;
+  }
+
+  .visibility-text,
+  .visibility-image {
+    text-align: center;
+    justify-content: center !important;
+    align-items: center !important;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .visibility-image img {
+    width: 100%;
+    height: auto;
+    max-width: 360px;
+  }
+}
