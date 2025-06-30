@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Therapeutenkompas - Word zichtbaar als therapeut</title>
+  <link href="https://cdn.boxicons.com/fonts/basic/boxicons.min.css" rel="stylesheet">
+  <link href="https://cdn.boxicons.com/fonts/brands/boxicons-brands.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo+Narrow:wght@400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="Fonts.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero fade-trigger" id="hero">
+  <img src="Img/BG1.jpeg" alt="achtergrondbeeld met uitgestrekte hand" class="hero-background" />
+  <div class="overlay"></div>
+  <div class="hero-content fade-in">
+    <h1><span>Laat jouw praktijk</span> <br />groeien met Therapeutenkompas</h1>
+    <h5>
+      Maak een profiel aan en vergroot je zichtbaarheid bij mensen die gericht zoeken naar een therapeut zoals jij.
+    </h5>
+    <div class="buttons">
+      <a href="https://voorbeeldlink.nl" class="btn primary">Direct aanmelden</a>
+      <a href="#features" class="btn secondary">Ontdek hoe het werkt</a>
+    </div>
+  </div>
+  <div class="logo fade-in">
+    <img src="img/TK-logo.png" alt="Therapeutenkompas logo" />
+  </div>
+</section>
+
+
+<!-- PLATFORM INFO -->
+<section class="visibility-section text-dark-blue fade-trigger">
+  <div class="visibility-container">
+    <div class="visibility-text fade-in">
+      <h2>Waarom Therapeutenkompas?</h2>
+      <p class="subheading">Voor therapeuten in de complementaire zorg</p>
+      <p>
+        Als zelfstandig therapeut wil je zichtbaar zijn voor mensen die hulp zoeken. Therapeutenkompas helpt jou online op de kaart te staan, zonder ingewikkeld gedoe.
+      </p>
+      <p>
+        Met jouw profiel op ons platform laat je duidelijk zien wie je bent, wat je aanbiedt en voor wie. Je profiel komt in beeld bij mensen die gericht zoeken op klacht, regio of therapievorm.
+      </p>
+      <p>
+        Kies zelf hoe uitgebreid je zichtbaar wilt zijn. Je kunt altijd starten met een gratis profiel, of kiezen voor een extra boost via onze premium opties.
+      </p>
+      <a href="#" class="btn primary">Start nu</a>
+    </div>
+    <div class="visibility-image fade-in">
+      <img src="img/Interior pic.png" alt="Sfeervolle praktijkruimte" />
+    </div>
+  </div>
+</section>
+
+<!-- VIDEO UITLEG -->
+<section class="how-it-works-section fade-trigger" id="how-it-works">
+  <h2>Hoe maak ik mijn profiel compleet?</h2>
+  <div class="video-wrapper">
+    <video controls>
+      <source src="TK - Hoe maak ik mijn profiel compleet.mp4" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features fade-trigger" id="features">
+  <div class="features-container">
+    <div class="feature fade-in">
+      <i class='bxr bx-globe icon-lg' style='color:#4fa6a0; font-size: 36px;'></i>
+      <div class="feature-text">
+        <h4>Online vindbaarheid</h4>
+        <p>Word sneller gevonden via onze zoekfilters en in Google.</p>
+      </div>
+    </div>
+    <div class="feature fade-in">
+      <i class='bxr bx-group icon-lg' style='color:#4fa6a0; font-size: 36px;'></i>
+      <div class="feature-text">
+        <h4>Trek de juiste cliënten aan</h4>
+        <p>Bereik mensen die echt passen bij jouw praktijk en aanpak.</p>
+      </div>
+    </div>
+    <div class="feature fade-in">
+      <i class='bxr bx-credit-card icon-lg' style='color:#4fa6a0; font-size: 36px;'></i>
+      <div class="feature-text">
+        <h4>Heldere tarieven</h4>
+        <p>Gratis profiel of betaalbare opties om jouw bereik te vergroten.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- VIDEO PARALLAX -->
+<section class="video-parallax-section">
+  <video autoplay muted loop playsinline class="video-bg">
+    <source src="img/Handshake.mp4" type="video/mp4" />
+    Your browser does not support the video tag.
+  </video>
+  <div class="video-content">
+    <h1>Meer cliënten bereiken begint hier</h1>
+    <h5>Laat jouw praktijk groeien op een platform dat bij jou past</h5>
+      <a href="https://voorbeeldlink.nl" class="btn primary">Aanmelden</a>
+  </div>
+</section>
+
+<!-- Alleen fade-ins -->
+<script>
+  const fadeObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const fadeEls = entry.target.querySelectorAll('.fade-in');
+      fadeEls.forEach(el => {
+        el.classList.toggle('visible', entry.isIntersecting);
+      });
+    });
+  }, { threshold: 0.3 });
+
+  const sections = document.querySelectorAll('.fade-trigger');
+  sections.forEach(section => {
+    fadeObserver.observe(section);
+  });
+</script>
+
+</body>
+</html>

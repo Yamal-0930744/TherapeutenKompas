@@ -13,8 +13,9 @@ body, html {
   font-size: 18px;
   line-height: 1.5;
   scroll-behavior: auto;
-  overflow: hidden;
-  height: 100%;
+  overflow-x: hidden;     /* alleen horizontaal blokkeren */
+  overflow-y: auto;       /* verticale scroll toestaan */
+  min-height: 100vh; 
   scroll-snap-align: start;
   scroll-behavior: smooth;
   scroll-snap-type: none;
