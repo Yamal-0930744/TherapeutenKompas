@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Treasure Path</title>
+  <link rel="stylesheet" href="C4Wstyles.css" />
+</head>
+<body>
+  <div class="path-container">
+    <!-- SVG path -->
+    <svg viewBox="0 0 1000 1600" class="path-svg">
+      <path d="M100,100 C200,200 400,100 500,200 
+               S700,400 600,500 
+               S300,700 400,800 
+               S700,1000 600,1100 
+               S400,1300 500,1400 
+               S800,1600 900,1500" 
+            fill="none" 
+            stroke="pink" 
+            stroke-width="12" 
+            stroke-linecap="round"
+            stroke-linejoin="round"
+      />
+    </svg>
+
+    <img src="img/treasure.png" class="treasure" data-index="1" style="top: 90px; left: 310px;" />
+    <img src="img/treasure.png" class="treasure" data-index="2" style="top: 170px; left: 460px;" />
+    <img src="img/treasure.png" class="treasure" data-index="3" style="top: 240px; left: 620px;" />
+    <img src="img/treasure.png" class="treasure" data-index="4" style="top: 340px; left: 740px;" />
+    <img src="img/treasure.png" class="treasure" data-index="5" style="top: 450px; left: 870px;" />
+    <img src="img/treasure.png" class="treasure" data-index="6" style="top: 580px; left: 700px;" />
+    <img src="img/treasure.png" class="treasure" data-index="7" style="top: 680px; left: 580px;" />
+    <img src="img/treasure.png" class="treasure" data-index="8" style="top: 820px; left: 720px;" />
+    <img src="img/treasure.png" class="treasure" data-index="9" style="top: 960px; left: 840px;" />
+    <img src="img/treasure.png" class="treasure" data-index="10" style="top: 1100px; left: 720px;" />
+    <img src="img/treasure.png" class="treasure" data-index="11" style="top: 1240px; left: 640px;" />
+    <img src="img/treasure.png" class="treasure" data-index="12" style="top: 1400px; left: 820px;" />
+  </div>
+
+  <!-- Modal -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <span class="close-button" onclick="closeModal()">&times;</span>
+      <p id="modal-message">...</p>
+    </div>
+  </div>
+
+  <script>
+    const messages = [
+      "Checkpoint 1 bereikt!",
+      "Checkpoint 2 bereikt!",
+      "Checkpoint 3 bereikt!",
+      "Checkpoint 4 bereikt!",
+      "Checkpoint 5 bereikt!",
+      "Checkpoint 6 bereikt!",
+      "Checkpoint 7 bereikt!",
+      "Checkpoint 8 bereikt!",
+      "Checkpoint 9 bereikt!",
+      "Checkpoint 10 bereikt!",
+      "Checkpoint 11 bereikt!",
+      "Eindpunt bereikt – gefeliciteerd!"
+    ];
+
+    document.querySelectorAll('.treasure').forEach(treasure => {
+      treasure.addEventListener('click', () => {
+        const index = parseInt(treasure.dataset.index, 10);
+        document.getElementById('modal-message').textContent = messages[index - 1];
+        document.getElementById('modal').style.display = 'flex';
+      });
+    });
+
+    function closeModal() {
+      document.getElementById('modal').style.display = 'none';
+    }
+  </script>
+</body>
+</html>

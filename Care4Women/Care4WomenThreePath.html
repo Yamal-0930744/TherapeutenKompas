@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Treasure Modal Game</title>
+  <style>
+    body { margin: 0; overflow: hidden; font-family: sans-serif; }
+    canvas { display: block; }
+    #modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+    #modalContent {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+    }
+    #modalContent button {
+      margin-top: 15px;
+      padding: 8px 16px;
+      border: none;
+      background: hotpink;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div id="modal">
+  <div id="modalContent">
+    <h2>🎉 Je hebt een schat gevonden!</h2>
+    <p>Goed bezig! Je hebt net een schatkist geopend.</p>
+    <button onclick="closeModal()">Sluiten</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.146.0/build/three.min.js"></script>
+<script>
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(innerWidth, innerHeight);
+document.body.appendChild(renderer.domElement);
+
+// Light
+const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+directionalLight.position.set(20, 20, 10);
+scene.add(directionalLight);
+scene.add(new THREE.AmbientLight(0xffffff, 0.4));
+
+// Ground
+const gridSize = 20;
+const tileSize = 1;
+const groundMat = new THREE.MeshLambertMaterial({ color: 0xdddddd });
+
+for (let x = 0; x < gridSize; x++) {
+  for (let z = 0; z < gridSize; z++) {
+    const tile = new THREE.Mesh(new THREE.BoxGeometry(tileSize, 0.1, tileSize), groundMat);
+    tile.position.set(x, -0.05, z);
+    scene.add(tile);
+  }
+}
+
+// Player
+const player = new THREE.Mesh(
+  new THREE.BoxGeometry(0.8, 0.8, 0.8),
+  new THREE.MeshLambertMaterial({ color: 0xff69b4 })
+);
+player.position.set(0, 0.4, 0);
+scene.add(player);
+const playerPos = { x: 0, z: 0 };
+
+// Chests
+const chestMat = new THREE.MeshLambertMaterial({ color: 0xffc0cb });
+const chestMeshes = [];
+
+function getRandomUniquePositions(count, maxX, maxZ) {
+  const positions = new Set();
+  while (positions.size < count) {
+    const x = Math.floor(Math.random() * maxX);
+    const z = Math.floor(Math.random() * maxZ);
+    if (x !== 0 || z !== 0) positions.add(`${x},${z}`);
+  }
+  return Array.from(positions).map(str => {
+    const [x, z] = str.split(',').map(Number);
+    return { x, z };
+  });
+}
+
+getRandomUniquePositions(12, gridSize, gridSize).forEach((pos, i) => {
+  const chest = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.6, 0.6), chestMat);
+  chest.position.set(pos.x, 0.3, pos.z);
+  chest.name = `Chest ${i + 1}`;
+  scene.add(chest);
+  chestMeshes.push({ mesh: chest, pos });
+});
+
+// Jump
+function jumpPlayer(toX, toZ) {
+  const duration = 400;
+  const start = { x: player.position.x, y: 0.4, z: player.position.z };
+  let startTime = null;
+
+  function animateJump(time) {
+    if (!startTime) startTime = time;
+    const t = (time - startTime) / duration;
+
+    if (t < 1) {
+      const p = Math.min(t, 1);
+      const h = Math.sin(p * Math.PI) * 1.2;
+      const x = start.x + (toX - start.x) * p;
+      const z = start.z + (toZ - start.z) * p;
+      player.position.set(x, start.y + h, z);
+      requestAnimationFrame(animateJump);
+    } else {
+      player.position.set(toX, 0.4, toZ);
+    }
+  }
+
+  requestAnimationFrame(animateJump);
+}
+
+// Camera
+const cameraOffset = new THREE.Vector3(5, 7, 5);
+camera.position.copy(player.position).add(cameraOffset);
+camera.lookAt(new THREE.Vector3(player.position.x, 0.4, player.position.z));
+const fixedQuaternion = camera.quaternion.clone();
+
+// Movement flag
+let canMove = true;
+
+// Movement
+window.addEventListener('keydown', (e) => {
+  if (!canMove) return;
+
+  let moved = false;
+  if (e.key === 'ArrowUp'    && playerPos.z > 0)             { playerPos.z--; moved = true; }
+  if (e.key === 'ArrowDown'  && playerPos.z < gridSize - 1)  { playerPos.z++; moved = true; }
+  if (e.key === 'ArrowLeft'  && playerPos.x > 0)             { playerPos.x--; moved = true; }
+  if (e.key === 'ArrowRight' && playerPos.x < gridSize - 1)  { playerPos.x++; moved = true; }
+
+  if (moved) {
+    jumpPlayer(playerPos.x, playerPos.z);
+
+    for (let i = 0; i < chestMeshes.length; i++) {
+      const c = chestMeshes[i];
+      if (c.pos.x === playerPos.x && c.pos.z === playerPos.z) {
+        scene.remove(c.mesh);
+        chestMeshes.splice(i, 1);
+        createSparkleEffect(c.pos.x, 0.6, c.pos.z);
+        canMove = false;
+        setTimeout(showModal, 500);
+        break;
+      }
+    }
+  }
+});
+
+// Modal
+function showModal() {
+  document.getElementById("modal").style.display = "flex";
+}
+function closeModal() {
+  document.getElementById("modal").style.display = "none";
+  canMove = true;
+}
+
+// Resize
+window.addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+
+// Sparkle animation
+function createSparkleEffect(x, y, z) {
+  const sparkleGroup = new THREE.Group();
+
+  for (let i = 0; i < 30; i++) {
+    const lightness = Math.floor(60 + Math.random() * 30); // 60–90% brightness
+    const color = new THREE.Color(`hsl(55, 100%, ${lightness}%)`);
+
+    const material = new THREE.MeshBasicMaterial({
+      color,
+      transparent: true,
+      opacity: 1
+    });
+
+    const sparkle = new THREE.Mesh(
+      new THREE.SphereGeometry(0.2, 8, 8),
+      material
+    );
+
+    const offset = new THREE.Vector3(
+      (Math.random() - 0.5) * 4, // ← doubled horizontal spread
+      Math.random() * 1 + 0.5,
+      (Math.random() - 0.5) * 4  // ← doubled horizontal spread
+    );
+    sparkle.position.copy(offset);
+    sparkleGroup.add(sparkle);
+  }
+
+  sparkleGroup.position.set(x, y, z);
+  scene.add(sparkleGroup);
+
+  let sparkleLifetime = 0;
+  function animateSparkles() {
+    sparkleLifetime += 0.025;
+    if (sparkleLifetime >= 1.2) {
+      scene.remove(sparkleGroup);
+      return;
+    }
+
+    sparkleGroup.children.forEach(s => {
+      s.material.opacity = 1 - sparkleLifetime;
+      s.position.y += 0.015;
+    });
+
+    requestAnimationFrame(animateSparkles);
+  }
+
+  animateSparkles();
+}
+
+
+// Render loop
+function animate() {
+  requestAnimationFrame(animate);
+
+  const camTarget = new THREE.Vector3(
+    player.position.x + cameraOffset.x,
+    camera.position.y,
+    player.position.z + cameraOffset.z
+  );
+  camera.position.lerp(camTarget, 0.08);
+  camera.quaternion.copy(fixedQuaternion);
+
+  renderer.render(scene, camera);
+}
+animate();
+</script>
+</body>
+</html>
