@@ -35,27 +35,26 @@
   } from './ThreeJSMap.js';
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 1000);
+  const camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.1, 1000);
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(innerWidth, innerHeight);
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   document.body.appendChild(renderer.domElement);
 
-  // Licht
-  const ambient = new THREE.AmbientLight(0xffffff, 0.3);
-  scene.add(ambient);
+  const clock = new THREE.Clock();
 
+  // Licht
+  scene.add(new THREE.AmbientLight(0xffffff, 0.3));
   const sun = new THREE.DirectionalLight(0xffffff, 1.2);
-  sun.position.set(10, 30, 10);
+  sun.position.set(10,30,10);
   sun.castShadow = true;
-  sun.shadow.mapSize.width = 2048;
-  sun.shadow.mapSize.height = 2048;
+  sun.shadow.mapSize.set(2048,2048);
   sun.shadow.camera.near = 0.5;
-  sun.shadow.camera.far = 100;
-  sun.shadow.camera.left = -30;
-  sun.shadow.camera.right = 30;
-  sun.shadow.camera.top = 30;
+  sun.shadow.camera.far  = 100;
+  sun.shadow.camera.left   = -30;
+  sun.shadow.camera.right  =  30;
+  sun.shadow.camera.top    =  30;
   sun.shadow.camera.bottom = -30;
   scene.add(sun);
 
@@ -64,141 +63,186 @@
 
   // Player
   const spawn = getSpawnPosition();
-  let player = new THREE.Group();
+  const player = new THREE.Group();
   scene.add(player);
-
   gltfLoader.load(
     './assets/character-e.glb',
-    (gltf) => {
+    gltf => {
       const model = gltf.scene;
-      new THREE.TextureLoader().load('./assets/texture-e.png', (tx) => {
-        model.traverse((c) => {
+      new THREE.TextureLoader().load('./assets/texture-e.png', tx => {
+        model.traverse(c => {
           if (c.isMesh) {
-            c.material = new THREE.MeshStandardMaterial({
-              map: tx,
-              transparent: true
-            });
-            c.castShadow = true;
-            c.receiveShadow = true;
+            c.material = new THREE.MeshStandardMaterial({ map: tx, transparent: true });
+            c.castShadow = c.receiveShadow = true;
           }
         });
-        model.scale.set(0.65, 0.65, 0.65);
-        model.position.set(0, 0, 0);
+        model.scale.set(0.65,0.65,0.65);
       });
       player.position.set(spawn.x, 0, spawn.z);
       player.add(model);
     },
     undefined,
-    (err) => console.error('player-load error', err)
+    err => console.error('player-load error', err)
   );
 
   const playerPos = { x: spawn.x, z: spawn.z };
-
-  // Chests
-  const chestMat = new THREE.MeshLambertMaterial({ color: 0xffc0cb });
-  const chestMeshes = [];
   const walkablePositions = getWalkablePositions();
+  const chestMeshes = [];
+  const mixers = [];
 
   function placeChests() {
-    const positions = new Set();
-    while (positions.size < 12 && walkablePositions.length) {
-      const pos = walkablePositions[Math.floor(Math.random() * walkablePositions.length)];
-      if (pos.x === spawn.x && pos.z === spawn.z) continue;
-      positions.add(`${pos.x},${pos.z}`);
-    }
-    Array.from(positions).forEach((str, i) => {
-      const [x, z] = str.split(',').map(Number);
-      const chest = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.6, 0.6), chestMat);
-      chest.position.set(x, 0.3, z);
-      chest.name = `Chest ${i + 1}`;
-      chest.castShadow = true;
-      chest.receiveShadow = true;
-      scene.add(chest);
-      chestMeshes.push({ mesh: chest, pos: { x, z } });
-    });
+  const positions = new Set();
+  while (positions.size < 12 && walkablePositions.length) {
+    const pos = walkablePositions[Math.floor(Math.random() * walkablePositions.length)];
+    if (pos.x === spawn.x && pos.z === spawn.z) continue;
+    positions.add(`${pos.x},${pos.z}`);
   }
+
+  Array.from(positions).forEach((str, i) => {
+    const [x, z] = str.split(',').map(Number);
+
+    gltfLoader.load('./assets/chest.glb', (gltf) => {
+      const chest = gltf.scene;
+
+      chest.traverse((c) => {
+        if (!c.isMesh) return;
+
+        // Assign gold material to lid
+        if (c.name.toLowerCase().includes('lid')) {
+          c.material = new THREE.MeshStandardMaterial({
+            color: 0xffd700, // gold
+            metalness: 0.8,
+            roughness: 0.2,
+          });
+        }
+        // Assign brown material to body
+        else {
+          c.material = new THREE.MeshStandardMaterial({
+            color: 0x8B4513, // brown
+            metalness: 0.2,
+            roughness: 0.8,
+          });
+        }
+
+        c.castShadow = c.receiveShadow = true;
+      });
+
+      chest.scale.set(0.9, 0.9, 0.9);
+      chest.position.set(x - 0.30, 0.05, z + 0.20);
+      scene.add(chest);
+
+      const mixer = new THREE.AnimationMixer(chest);
+      const clip = gltf.animations.find(a => a.name.toLowerCase().includes('open'))
+                   || gltf.animations[0];
+      mixers.push(mixer);
+      chestMeshes.push({ mesh: chest, pos: { x, z }, mixer, clip });
+    });
+  });
+}
+
+
+
   placeChests();
 
-  function jumpPlayer(toX, toZ) {
-    const start = { x: player.position.x, y: 0.4, z: player.position.z };
+  function jumpPlayer(toX,toZ) {
+    const start = { x:player.position.x, y:0.4, z:player.position.z };
     const duration = 400;
     let startTime = null;
-    const hop = (t) => {
+    function hop(t) {
       if (!startTime) startTime = t;
-      const p = Math.min((t - startTime) / duration, 1);
-      const h = Math.sin(p * Math.PI) * 1.2;
-      player.position.set(start.x + (toX - start.x) * p, start.y + h, start.z + (toZ - start.z) * p);
-      p < 1 ? requestAnimationFrame(hop) : player.position.set(toX, 0.4, toZ);
-    };
+      const p = Math.min((t-startTime)/duration,1);
+      const h = Math.sin(p*Math.PI)*1.2;
+      player.position.set(
+        start.x + (toX-start.x)*p,
+        start.y + h,
+        start.z + (toZ-start.z)*p
+      );
+      if (p<1) requestAnimationFrame(hop);
+      else     player.position.set(toX,0.4,toZ);
+    }
     requestAnimationFrame(hop);
   }
 
-  const cameraOffset = new THREE.Vector3(8, 10, 8);
+  const cameraOffset = new THREE.Vector3(8,10,8);
   camera.position.copy(player.position).add(cameraOffset);
-  camera.lookAt(new THREE.Vector3(player.position.x, 0.4, player.position.z));
-  const fixedQuaternion = camera.quaternion.clone();
+  camera.lookAt(new THREE.Vector3(player.position.x,0.4,player.position.z));
+  const fixedQuat = camera.quaternion.clone();
 
   let canMove = true;
-  const isWalkable = (x, z) => walkablePositions.some(p => p.x === x && p.z === z);
+  const isWalkable = (x,z) => walkablePositions.some(p=>p.x===x&&p.z===z);
 
   window.addEventListener('keydown', e => {
     if (!canMove) return;
     let moved = false;
-    if (e.key === 'ArrowUp' && isWalkable(playerPos.x, playerPos.z - 1)) { playerPos.z--; moved = true; }
-    if (e.key === 'ArrowDown' && isWalkable(playerPos.x, playerPos.z + 1)) { playerPos.z++; moved = true; }
-    if (e.key === 'ArrowLeft' && isWalkable(playerPos.x - 1, playerPos.z)) { playerPos.x--; moved = true; }
-    if (e.key === 'ArrowRight' && isWalkable(playerPos.x + 1, playerPos.z)) { playerPos.x++; moved = true; }
-    if (moved) {
-      jumpPlayer(playerPos.x, playerPos.z);
-      for (let i = 0; i < chestMeshes.length; i++) {
-        const c = chestMeshes[i];
-        if (c.pos.x === playerPos.x && c.pos.z === playerPos.z) {
+    if (e.key==='ArrowUp'   && isWalkable(playerPos.x, playerPos.z-1)) { playerPos.z--; moved=true; }
+    if (e.key==='ArrowDown' && isWalkable(playerPos.x, playerPos.z+1)) { playerPos.z++; moved=true; }
+    if (e.key==='ArrowLeft' && isWalkable(playerPos.x-1, playerPos.z)) { playerPos.x--; moved=true; }
+    if (e.key==='ArrowRight'&& isWalkable(playerPos.x+1, playerPos.z)) { playerPos.x++; moved=true; }
+    if (!moved) return;
+
+    jumpPlayer(playerPos.x, playerPos.z);
+    for (let i=0;i<chestMeshes.length;i++){
+      const c = chestMeshes[i];
+      if (c.pos.x===playerPos.x && c.pos.z===playerPos.z) {
+        // open animation
+        c.mixer.clipAction(c.clip).reset().play();
+        setTimeout(()=>{
           scene.remove(c.mesh);
-          chestMeshes.splice(i, 1);
-          createSparkleEffect(c.pos.x, 0.6, c.pos.z);
-          canMove = false; setTimeout(showModal, 500); break;
-        }
+          chestMeshes.splice(i,1);
+          createSparkleEffect(c.pos.x,0.6,c.pos.z);
+          canMove=false; showModal();
+        }, 1000);
+        break;
       }
     }
   });
 
-  const modal = document.getElementById('modal');
+  const modal    = document.getElementById('modal');
   const closeBtn = document.getElementById('closeBtn');
-  const showModal = () => modal.style.display = 'flex';
-  const closeModal = () => { modal.style.display = 'none'; canMove = true; };
+  const showModal  = ()=>modal.style.display='flex';
+  const closeModal = ()=>{ modal.style.display='none'; canMove = true; };
   closeBtn.addEventListener('click', closeModal);
 
-  window.addEventListener('resize', () => {
-    camera.aspect = innerWidth / innerHeight;
+  window.addEventListener('resize', ()=>{
+    camera.aspect = innerWidth/innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(innerWidth, innerHeight);
   });
 
-  function createSparkleEffect(x, y, z) {
-    const g = new THREE.Group(); scene.add(g); g.position.set(x, y, z);
-    for (let i = 0; i < 30; i++) {
-      const col = new THREE.Color(`hsl(55,100%,${60 + Math.random() * 30}%)`);
-      const m = new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: 1 });
-      const s = new THREE.Mesh(new THREE.SphereGeometry(0.2, 8, 8), m);
-      s.position.set((Math.random() - 0.5) * 4, Math.random() * 1 + 0.5, (Math.random() - 0.5) * 4);
+  function createSparkleEffect(x,y,z){
+    const g = new THREE.Group(); scene.add(g); g.position.set(x,y,z);
+    for(let i=0;i<30;i++){
+      const col = new THREE.Color(`hsl(55,100%,${60+Math.random()*30}%)`);
+      const m   = new THREE.MeshBasicMaterial({ color:col, transparent:true, opacity:1 });
+      const s   = new THREE.Mesh(new THREE.SphereGeometry(0.2,8,8), m);
+      s.position.set((Math.random()-0.5)*4, Math.random()+0.5, (Math.random()-0.5)*4);
       g.add(s);
     }
-    let t = 0; (function fade() {
-      t += 0.025;
-      if (t >= 1.2) { scene.remove(g); return; }
-      g.children.forEach(s => { s.material.opacity = 1 - t; s.position.y += 0.015; });
+    let t=0; (function fade(){
+      t+=0.025;
+      if(t>=1.2){ scene.remove(g); return; }
+      g.children.forEach(s=>{ s.material.opacity=1-t; s.position.y+=0.015; });
       requestAnimationFrame(fade);
     })();
   }
 
-  function animate() {
+  function animate(){
     requestAnimationFrame(animate);
-    const target = new THREE.Vector3(player.position.x + cameraOffset.x, camera.position.y, player.position.z + cameraOffset.z);
+    const target = new THREE.Vector3(
+      player.position.x + cameraOffset.x,
+      camera.position.y,
+      player.position.z + cameraOffset.z
+    );
     camera.position.lerp(target, 0.08);
-    camera.quaternion.copy(fixedQuaternion);
+    camera.quaternion.copy(fixedQuat);
+
+    const delta = clock.getDelta();
+    mixers.forEach(m=>m.update(delta));
+
     renderer.render(scene, camera);
   }
   animate();
+
 </script>
 </body>
 </html>
