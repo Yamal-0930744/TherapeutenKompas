@@ -1,11 +1,45 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl">
 <head>
   <meta charset="UTF-8" />
   <title>Treasure Modal Game</title>
   <style>
     body { margin: 0; overflow: hidden; font-family: sans-serif; }
     canvas { display: block; }
+    /* Instruction modal */
+    #instrModal {
+      display: flex;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      justify-content: center;
+      align-items: center;
+      z-index: 20;
+    }
+    #instrModalContent {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      width: 400px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    #chestPreview {
+      width: 200px;
+      height: 200px;
+      margin: 0 auto 20px;
+    }
+    #startBtn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      border: none;
+      background: hotpink;
+      color: white;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    /* Game modal */
     #modal {
       display: none;
       position: fixed;
@@ -36,223 +70,365 @@
 </head>
 <body>
 
-<div id="modal">
-  <div id="modalContent">
-    <h2>🎉 Je hebt een schat gevonden!</h2>
-    <p>Goed bezig! Je hebt net een schatkist geopend.</p>
-    <button id="closeBtn">Sluiten</button>
+  <!-- Instruction Modal -->
+  <div id="instrModal">
+    <div id="instrModalContent">
+      <div id="chestPreview"></div>
+      <h2>Welkom bij VitalFem!</h2>
+      <p>
+        Gebruik de pijltoetsen <strong>↑ ↓ ← →</strong> om je personage te verplaatsen.<br>
+        Je doel is om alle <strong>12 schatkisten</strong> te verzamelen.<br>
+        Elke schatkist bevat een belangrijke boodschap voor jou!<br><br>
+        Veel succes en plezier!
+      </p>
+      <button id="startBtn">Start spel</button>
+    </div>
   </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/three@0.146.0/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.146.0/examples/js/loaders/GLTFLoader.js"></script>
+  <!-- Game Modal (treasure found) -->
+  <div id="modal">
+    <div id="modalContent">
+      <h2>🎉 Je hebt een schat gevonden!</h2>
+      <p>Goed bezig! Je hebt net een schatkist geopend.</p>
+      <button id="closeBtn">Sluiten</button>
+    </div>
+  </div>
 
-<script type="module">
-  import {
-    createMap,
-    getWalkablePositions,
-    getSpawnPosition,
-    tileSize
-  } from './ThreeJSMap.js';
+  <script src="https://cdn.jsdelivr.net/npm/three@0.146.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.146.0/examples/js/loaders/GLTFLoader.js"></script>
 
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 1000);
-  const renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setSize(innerWidth, innerHeight);
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-  document.body.appendChild(renderer.domElement);
+  <script type="module">
+    import {
+      createMap,
+      getWalkablePositions,
+      getSpawnPosition,
+      tileSize
+    } from './ThreeJSMap.js';
 
-  const clock = new THREE.Clock();
-
-  scene.add(new THREE.AmbientLight(0xffffff, 0.3));
-  const sun = new THREE.DirectionalLight(0xffffff, 1.2);
-  sun.position.set(10, 30, 10);
-  sun.castShadow = true;
-  sun.shadow.mapSize.set(2048, 2048);
-  sun.shadow.camera.near = 0.5;
-  sun.shadow.camera.far = 100;
-  sun.shadow.camera.left = -30;
-  sun.shadow.camera.right = 30;
-  sun.shadow.camera.top = 30;
-  sun.shadow.camera.bottom = -30;
-  scene.add(sun);
-
-  const gltfLoader = new THREE.GLTFLoader();
-  createMap(scene, gltfLoader);
-
-  const spawn = getSpawnPosition();
-  const player = new THREE.Group();
-  scene.add(player);
-
-  gltfLoader.load('./assets/character-e.glb', gltf => {
-    const model = gltf.scene;
-    new THREE.TextureLoader().load('./assets/texture-e.png', tx => {
-      model.traverse(c => {
-        if (c.isMesh) {
-          c.material = new THREE.MeshStandardMaterial({ map: tx, transparent: true });
-          c.castShadow = c.receiveShadow = true;
-        }
-      });
-      model.scale.set(0.65, 0.65, 0.65);
+    // Instruction modal logic
+    const instrModal = document.getElementById('instrModal');
+    const startBtn = document.getElementById('startBtn');
+    startBtn.addEventListener('click', () => {
+      instrModal.style.display = 'none';
     });
-    player.position.set(spawn.x, 0, spawn.z);
-    player.add(model);
+
+    // Chest preview scene in modal
+const chestScene = new THREE.Scene();
+const chestCamera = new THREE.PerspectiveCamera(60, 1, 0.1, 10);
+chestCamera.position.set(0, 0, 2);
+const chestRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+chestRenderer.setSize(200, 200);
+document.getElementById('chestPreview').appendChild(chestRenderer.domElement);
+
+const gltfLoader = new THREE.GLTFLoader();
+let chestModel;
+gltfLoader.load('./assets/chest.glb', gltf => {
+  chestModel = gltf.scene;
+  chestModel.scale.set(0.8, 0.8, 0.8);
+  chestModel.traverse(c => {
+    if (!c.isMesh) return;
+    if (c.name.toLowerCase().includes('lid')) {
+      c.material = new THREE.MeshStandardMaterial({
+        color: 0xffd700, metalness: 0.8, roughness: 0.2
+      });
+    } else {
+      c.material = new THREE.MeshStandardMaterial({
+        color: 0x8B4513, metalness: 0.2, roughness: 0.8
+      });
+    }
+    c.castShadow = c.receiveShadow = true;
   });
+  chestScene.add(chestModel);
 
-  const playerPos = { x: spawn.x, z: spawn.z };
-  const walkablePositions = getWalkablePositions();
-  const chestMeshes = [];
-  const mixers = [];
+  // Lights for the preview scene
+  const ambient = new THREE.AmbientLight(0xffffff, 0.6);
+  chestScene.add(ambient);
 
-  function placeChests() {
-    const positions = new Set();
-    while (positions.size < 12 && walkablePositions.length) {
-      const pos = walkablePositions[Math.floor(Math.random() * walkablePositions.length)];
-      if (pos.x === spawn.x && pos.z === spawn.z) continue;
-      positions.add(`${pos.x},${pos.z}`);
-    }
+  const directional = new THREE.DirectionalLight(0xffffff, 1);
+  directional.position.set(2, 4, 2);
+  chestScene.add(directional);
 
-    Array.from(positions).forEach(str => {
-      const [x, z] = str.split(',').map(Number);
-      gltfLoader.load('./assets/chest.glb', gltf => {
-        const chest = gltf.scene;
-        chest.traverse(c => {
-          if (!c.isMesh) return;
-          if (c.name.toLowerCase().includes('lid')) {
-            c.material = new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.8, roughness: 0.2 });
-          } else {
-            c.material = new THREE.MeshStandardMaterial({ color: 0x8B4513, metalness: 0.2, roughness: 0.8 });
-          }
-          c.castShadow = c.receiveShadow = true;
-        });
-        chest.scale.set(0.9, 0.9, 0.9);
-        chest.position.set(x - 0.30, 0.05, z + 0.20);
-        scene.add(chest);
+  // Start animation loop after chest is loaded
+  animateChest();
+});
 
-        const mixer = new THREE.AnimationMixer(chest);
-        const clip = gltf.animations.find(a => a.name.toLowerCase().includes('open')) || gltf.animations[0];
-        mixers.push(mixer);
-
-        chestMeshes.push({ mesh: chest, pos: { x, z }, mixer, clip, opened: false });
-      });
-    });
+function animateChest() {
+  requestAnimationFrame(animateChest);
+  if (chestModel) {
+    chestModel.rotation.y += 0.02;
+    chestModel.rotation.x = 0.2 * Math.sin(Date.now() * 0.002);
   }
+  chestRenderer.render(chestScene, chestCamera);
+}
 
-  placeChests();
 
-  function jumpPlayer(toX, toZ) {
-    const start = { x: player.position.x, y: 0.4, z: player.position.z };
-    const duration = 400;
-    let startTime = null;
-    function hop(t) {
-      if (!startTime) startTime = t;
-      const p = Math.min((t - startTime) / duration, 1);
-      const h = Math.sin(p * Math.PI) * 1.2;
-      player.position.set(start.x + (toX - start.x) * p, start.y + h, start.z + (toZ - start.z) * p);
-      if (p < 1) requestAnimationFrame(hop);
-      else player.position.set(toX, 0.4, toZ);
-    }
-    requestAnimationFrame(hop);
-  }
-
-  const cameraOffset = new THREE.Vector3(8, 10, 8);
-  camera.position.copy(player.position).add(cameraOffset);
-  camera.lookAt(new THREE.Vector3(player.position.x, 0.4, player.position.z));
-  const fixedQuat = camera.quaternion.clone();
-
-  let canMove = true;
-  const isWalkable = (x, z) => walkablePositions.some(p => p.x === x && p.z === z);
-
-  window.addEventListener('keydown', e => {
-    if (!canMove) return;
-    let moved = false;
-    if (e.key === 'ArrowUp' && isWalkable(playerPos.x, playerPos.z - 1)) { playerPos.z--; moved = true; }
-    if (e.key === 'ArrowDown' && isWalkable(playerPos.x, playerPos.z + 1)) { playerPos.z++; moved = true; }
-    if (e.key === 'ArrowLeft' && isWalkable(playerPos.x - 1, playerPos.z)) { playerPos.x--; moved = true; }
-    if (e.key === 'ArrowRight' && isWalkable(playerPos.x + 1, playerPos.z)) { playerPos.x++; moved = true; }
-    if (!moved) return;
-
-    jumpPlayer(playerPos.x, playerPos.z);
-    for (let i = 0; i < chestMeshes.length; i++) {
-      const c = chestMeshes[i];
-      if (c.pos.x === playerPos.x && c.pos.z === playerPos.z && !c.opened) {
-        c.opened = true;
-        c.mixer.clipAction(c.clip).reset().play();
-        createSparkleEffect(c.pos.x, 0.6, c.pos.z);
-        setTimeout(() => {
-          scene.remove(c.mesh);
-          chestMeshes.splice(i, 1);
-          canMove = false;
-          showModal();
-        }, 1000);
-        break;
-      }
-    }
-  });
-
-  function createSparkleEffect(x, y, z) {
-    const group = new THREE.Group();
-    scene.add(group);
-    group.position.set(x, y, z);
-
-    const sparkleCount = 40;
-    for (let i = 0; i < sparkleCount; i++) {
-      const color = new THREE.Color(`hsl(${Math.random() * 60 + 40}, 100%, 70%)`);
-      const material = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 1 });
-      const geometry = new THREE.SphereGeometry(0.07, 6, 6);
-      const sparkle = new THREE.Mesh(geometry, material);
-      sparkle.position.set((Math.random() - 0.5) * 1.5, Math.random() * 1.0, (Math.random() - 0.5) * 1.5);
-      sparkle.userData = {
-        velocityY: 0.01 + Math.random() * 0.015,
-        rotationSpeed: Math.random() * 0.1,
-        fadeSpeed: 0.015 + Math.random() * 0.01
-      };
-      group.add(sparkle);
-    }
-
-    const animateSparkles = () => {
-      group.children.forEach(s => {
-        s.position.y += s.userData.velocityY;
-        s.rotation.y += s.userData.rotationSpeed;
-        s.material.opacity -= s.userData.fadeSpeed;
-      });
-      group.children = group.children.filter(s => {
-        if (s.material.opacity <= 0) {
-          group.remove(s);
-          return false;
-        }
-        return true;
-      });
-      if (group.children.length > 0) requestAnimationFrame(animateSparkles);
-      else scene.remove(group);
-    };
-    animateSparkles();
-  }
-
-  const modal = document.getElementById('modal');
-  const closeBtn = document.getElementById('closeBtn');
-  const showModal = () => modal.style.display = 'flex';
-  const closeModal = () => { modal.style.display = 'none'; canMove = true; };
-  closeBtn.addEventListener('click', closeModal);
-
-  window.addEventListener('resize', () => {
-    camera.aspect = innerWidth / innerHeight;
-    camera.updateProjectionMatrix();
+    // Main game setup
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(innerWidth, innerHeight);
-  });
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    document.body.appendChild(renderer.domElement);
 
-  function animate() {
-    requestAnimationFrame(animate);
-    const target = new THREE.Vector3(player.position.x + cameraOffset.x, camera.position.y, player.position.z + cameraOffset.z);
-    camera.position.lerp(target, 0.08);
-    camera.quaternion.copy(fixedQuat);
+    const clock = new THREE.Clock();
 
-    const delta = clock.getDelta();
-    mixers.forEach(m => m.update(delta));
-    renderer.render(scene, camera);
-  }
-  animate();
-</script>
+    scene.add(new THREE.AmbientLight(0xffffff, 0.3));
+    const sun = new THREE.DirectionalLight(0xffffff, 1.2);
+    sun.position.set(10, 30, 10);
+    sun.castShadow = true;
+    sun.shadow.mapSize.set(2048, 2048);
+    sun.shadow.camera.near = 0.5;
+    sun.shadow.camera.far = 100;
+    sun.shadow.camera.left = -30;
+    sun.shadow.camera.right = 30;
+    sun.shadow.camera.top = 30;
+    sun.shadow.camera.bottom = -30;
+    scene.add(sun);
+
+    createMap(scene, gltfLoader);
+
+    const spawn = getSpawnPosition();
+    const player = new THREE.Group();
+    scene.add(player);
+
+    const playerPos = { x: spawn.x, z: spawn.z };
+    const walkablePositions = getWalkablePositions();
+    const chestMeshes = [];
+    const mixers = [];
+    let jumping = false;
+
+    gltfLoader.load('./assets/character-e.glb', gltf => {
+      const model = gltf.scene;
+      const walkClip = gltf.animations.find(a => a.name.toLowerCase() === 'walk');
+      const idleClip = gltf.animations.find(a => a.name.toLowerCase() === 'idle');
+      const mixer = new THREE.AnimationMixer(model);
+      const walkAction = walkClip ? mixer.clipAction(walkClip) : null;
+      const idleAction = idleClip ? mixer.clipAction(idleClip) : null;
+
+      new THREE.TextureLoader().load('./assets/texture-e.png', tx => {
+        model.traverse(c => {
+          if (c.isMesh) {
+            c.material = new THREE.MeshStandardMaterial({ map: tx, transparent: true });
+            c.castShadow = c.receiveShadow = true;
+          }
+        });
+        model.scale.set(0.65, 0.65, 0.65);
+      });
+
+      player.position.set(spawn.x, 0, spawn.z);
+      player.add(model);
+
+      player.userData.mixer = mixer;
+      player.userData.walkAction = walkAction;
+      player.userData.idleAction = idleAction;
+      if (idleAction) idleAction.play();
+      mixers.push(mixer);
+    });
+
+    function jumpPlayer(toX, toZ, onComplete) {
+      if (jumping) return;
+      jumping = true;
+
+      const start = new THREE.Vector3().copy(player.position);
+      const end = new THREE.Vector3(toX, 0.4, toZ);
+      const duration = 240;
+      let startTime = null;
+
+      function animateJump(timestamp) {
+        if (!startTime) startTime = timestamp;
+        const elapsed = timestamp - startTime;
+        const t = Math.min(elapsed / duration, 1);
+        const height = Math.sin(t * Math.PI) * 0.8;
+
+        const currentPos = new THREE.Vector3().lerpVectors(start, end, t);
+        currentPos.y += height;
+        player.position.copy(currentPos);
+
+        if (t < 1) {
+          requestAnimationFrame(animateJump);
+        } else {
+          player.position.copy(end);
+          jumping = false;
+          if (onComplete) onComplete();
+        }
+      }
+
+      requestAnimationFrame(animateJump);
+    }
+
+    function placeChests() {
+      const positions = new Set();
+      while (positions.size < 12 && walkablePositions.length) {
+        const pos = walkablePositions[Math.floor(Math.random() * walkablePositions.length)];
+        if (pos.x === spawn.x && pos.z === spawn.z) continue;
+        positions.add(`${pos.x},${pos.z}`);
+      }
+
+      Array.from(positions).forEach(str => {
+        const [x, z] = str.split(',').map(Number);
+        gltfLoader.load('./assets/chest.glb', gltf => {
+          const chest = gltf.scene;
+          chest.traverse(c => {
+            if (!c.isMesh) return;
+            if (c.name.toLowerCase().includes('lid')) {
+              c.material = new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.8, roughness: 0.2 });
+            } else {
+              c.material = new THREE.MeshStandardMaterial({ color: 0x8B4513, metalness: 0.2, roughness: 0.8 });
+            }
+            c.castShadow = c.receiveShadow = true;
+          });
+          chest.scale.set(0.9, 0.9, 0.9);
+          chest.position.set(x - 0.30, 0.05, z + 0.20);
+          scene.add(chest);
+
+          const mixer = new THREE.AnimationMixer(chest);
+          const clip = gltf.animations.find(a => a.name.toLowerCase().includes('open')) || gltf.animations[0];
+          mixers.push(mixer);
+
+          chestMeshes.push({ mesh: chest, pos: { x, z }, mixer, clip, opened: false });
+        });
+      });
+    }
+
+    placeChests();
+
+    const cameraOffset = new THREE.Vector3(8, 10, 8);
+    camera.position.copy(player.position).add(cameraOffset);
+    camera.lookAt(new THREE.Vector3(player.position.x, 0.4, player.position.z));
+    const fixedQuat = camera.quaternion.clone();
+
+    let canMove = true;
+    const isWalkable = (x, z) => walkablePositions.some(p => p.x === x && p.z === z);
+
+    window.addEventListener('keydown', e => {
+      if (!canMove || jumping) return;
+      let moved = false;
+
+      if (e.key === 'ArrowUp' && isWalkable(playerPos.x, playerPos.z - 1)) {
+        playerPos.z--;
+        player.rotation.y = Math.PI;
+        moved = true;
+      }
+      if (e.key === 'ArrowDown' && isWalkable(playerPos.x, playerPos.z + 1)) {
+        playerPos.z++;
+        player.rotation.y = 0;
+        moved = true;
+      }
+      if (e.key === 'ArrowLeft' && isWalkable(playerPos.x - 1, playerPos.z)) {
+        playerPos.x--;
+        player.rotation.y = -Math.PI / 2;
+        moved = true;
+      }
+      if (e.key === 'ArrowRight' && isWalkable(playerPos.x + 1, playerPos.z)) {
+        playerPos.x++;
+        player.rotation.y = Math.PI / 2;
+        moved = true;
+      }
+
+      if (!moved) {
+        if (player.userData.idleAction) {
+          player.userData.walkAction?.stop();
+          player.userData.idleAction.reset().play();
+        }
+        return;
+      }
+
+      if (player.userData.walkAction) {
+        player.userData.idleAction?.stop();
+        const action = player.userData.walkAction;
+        action.reset().setLoop(THREE.LoopOnce, 1);
+        action.clampWhenFinished = true;
+        action.play();
+      }
+
+      jumpPlayer(playerPos.x, playerPos.z, () => {
+        if (player.userData.idleAction) {
+          player.userData.walkAction?.stop();
+          player.userData.idleAction.reset().play();
+        }
+
+        for (let i = 0; i < chestMeshes.length; i++) {
+          const c = chestMeshes[i];
+          if (c.pos.x === playerPos.x && c.pos.z === playerPos.z && !c.opened) {
+            c.opened = true;
+            c.mixer.clipAction(c.clip).reset().play();
+            createSparkleEffect(c.pos.x, 0.6, c.pos.z);
+            setTimeout(() => {
+              scene.remove(c.mesh);
+              chestMeshes.splice(i, 1);
+              canMove = false;
+              showModal();
+            }, 1000);
+            break;
+          }
+        }
+      });
+    });
+
+    function createSparkleEffect(x, y, z) {
+      const group = new THREE.Group();
+      scene.add(group);
+      group.position.set(x, y, z);
+
+      const sparkleCount = 40;
+      for (let i = 0; i < sparkleCount; i++) {
+        const color = new THREE.Color(`hsl(${Math.random() * 60 + 40}, 100%, 70%)`);
+        const material = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 1 });
+        const geometry = new THREE.SphereGeometry(0.07, 6, 6);
+        const sparkle = new THREE.Mesh(geometry, material);
+        sparkle.position.set((Math.random() - 0.5) * 1.5, Math.random() * 1.0, (Math.random() - 0.5) * 1.5);
+        sparkle.userData = {
+          velocityY: 0.01 + Math.random() * 0.015,
+          rotationSpeed: Math.random() * 0.1,
+          fadeSpeed: 0.015 + Math.random() * 0.01
+        };
+        group.add(sparkle);
+      }
+
+      const animateSparkles = () => {
+        group.children.forEach(s => {
+          s.position.y += s.userData.velocityY;
+          s.rotation.y += s.userData.rotationSpeed;
+          s.material.opacity -= s.userData.fadeSpeed;
+        });
+        group.children = group.children.filter(s => {
+          if (s.material.opacity <= 0) {
+            group.remove(s);
+            return false;
+          }
+          return true;
+        });
+        if (group.children.length > 0) requestAnimationFrame(animateSparkles);
+        else scene.remove(group);
+      };
+      animateSparkles();
+    }
+
+    const modal = document.getElementById('modal');
+    const closeBtn = document.getElementById('closeBtn');
+    const showModal = () => modal.style.display = 'flex';
+    const closeModal = () => { modal.style.display = 'none'; canMove = true; };
+    closeBtn.addEventListener('click', closeModal);
+
+    window.addEventListener('resize', () => {
+      camera.aspect = innerWidth / innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(innerWidth, innerHeight);
+    });
+
+    function animate() {
+      requestAnimationFrame(animate);
+      const target = new THREE.Vector3(player.position.x + cameraOffset.x, camera.position.y, player.position.z + cameraOffset.z);
+      camera.position.lerp(target, 0.1);
+      camera.quaternion.copy(fixedQuat);
+
+      const delta = clock.getDelta();
+      mixers.forEach(m => m.update(delta));
+      renderer.render(scene, camera);
+    }
+    animate();
+
+  </script>
 </body>
 </html>
