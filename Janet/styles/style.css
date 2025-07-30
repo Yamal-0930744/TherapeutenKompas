@@ -1,0 +1,793 @@
+/*  Fonts import */
+@import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@700&family=Ubuntu:wght@400;500;700&display=swap');
+
+
+/*  Color & font variables */
+:root {
+  --primary-color: #77bd20;
+  --text-dark: #222;
+  --bg-light: #f9f9f9;
+  --font-heading: 'League Spartan', sans-serif;
+}
+
+/*  Reset & base */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  background: var(--bg-light);
+  color: var(--text-dark);
+  overflow-x: hidden;
+}
+
+/*  Hero wrapper */
+.hero-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  min-height: 100vh;
+}
+.hero {
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('img/hero_bg.png') center/cover no-repeat;
+  opacity: 0.3;
+  z-index: -1;
+}
+
+/*  Logo */
+.logo {
+  flex: 1 0 150px;
+  max-width: 150px;
+  margin: 20px;
+}
+
+/*  Text block */
+.hero-text {
+  flex: 2 1 400px;
+  position: relative;
+  max-width: 50vw;
+  margin-left: -75px;
+}
+.hero-text h1 {
+  font-family: var(--font-heading);
+  font-weight: 900;
+  font-size: 6.5rem;
+  line-height: 0.9;
+  margin-bottom: 0.2em;
+  position: relative;
+  padding-left: 1.5rem;
+}
+.hero-text h1::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.1em;
+  width: 4px;
+  height: 1.5em;
+  background: var(--primary-color);
+}
+.hero-text h2 {
+  font-family: 'Ubuntu', sans-serif;
+  font-weight: 400;
+  font-size: 2.25rem;
+  line-height: 1.1;
+  margin-bottom: 1.5em;
+  color: #444;
+  padding-left: 1.5rem;
+}
+.btn-primary {
+  display: inline-block;
+  background: var(--primary-color);
+  color: #fff;
+  border: none;
+  padding: 0.75em 1.5em;
+  font-family: 'Ubuntu', sans-serif;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: 0.275rem;
+  cursor: pointer;
+  margin-left: 1.5rem;
+  min-height: 7vh;
+  min-width: 15vw;
+  transform: scale(1);
+  transform-origin: center center;
+  transition: transform 0.3s ease-in-out;
+}
+
+.btn-primary:hover {
+  display: inline-block;
+  background: #71a424;
+  color: #fff;
+  border: none;
+  padding: 0.75em 1.5em;
+  font-family: 'Ubuntu', sans-serif;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: 0.275rem;
+  cursor: pointer;
+  margin-left: 1.5rem;
+  transform: translateY(0) scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/*  Image frames */
+.hero-images {
+  flex: 3 1 400px;
+  display: flex;
+  gap: 2rem;
+  margin-left: 10vw;
+  margin-bottom: 10vh;
+}
+.frame {
+  flex: 1;
+  overflow: hidden;
+}
+.frame img {
+  width: 180%;
+  height: 180%;
+  object-fit: cover;
+}
+#frame1 { margin-top: 10px; }
+#frame2 { margin-top: 20px; }
+#frame3 { margin-top: -10px; }
+
+/*  Responsive @ 1024px */
+@media (max-width: 1024px) {
+  .hero-text {
+    max-width: 60vw;
+    margin-left: -50px;
+  }
+  .hero-text h1 {
+    font-size: 5rem;
+    line-height: 1.0;
+  }
+  .hero-text h2 {
+    font-size: 1.75rem;
+  }
+  .btn-primary {
+    min-width: 20vw;
+    min-height: 6vh;
+    margin-left: 1rem;
+  }
+  .hero-images {
+    gap: 1.5rem;
+    margin-left: 5vw;
+    margin-bottom: 8vh;
+  }
+  .frame img {
+    width: 160%;
+    height: 160%;
+  }
+}
+
+/*  Responsive @ 768px */
+@media (max-width: 768px) {
+  .hero-inner {
+    flex-direction: column;
+    text-align: center;
+    height: auto;
+    padding: 2rem 0;
+  }
+  .hero-text {
+    max-width: 90%;
+    margin-left: 0;
+    margin-bottom: 2rem;
+  }
+  .hero-text h1 {
+    font-size: 3.5rem;
+    line-height: 1.1;
+    padding-left: 0.75rem;
+  }
+  .hero-text h1::before {
+    top: 0.15em;
+    height: 1.2em;
+  }
+  .hero-text h2 {
+    font-size: 1.5rem;
+    padding-left: 0.75rem;
+  }
+  .btn-primary {
+    min-width: 50vw;
+    margin-left: 0;
+  }
+  .hero-images {
+    width: 100%;
+    margin: 0 auto 3rem;
+    gap: 1rem;
+  }
+  .frame {
+    height: 180px;
+  }
+  .frame img {
+    width: 150%;
+    height: 150%;
+  }
+}
+
+/*  Responsive @ 480px */
+@media (max-width: 480px) {
+  .hero-text h1 {
+    font-size: 2.5rem;
+    line-height: 1.2;
+  }
+  .hero-text h2 {
+    font-size: 1.25rem;
+  }
+  .btn-primary {
+    width: 80%;
+    padding: 0.75em 0;
+    font-size: 0.9rem;
+  }
+  .hero-images {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .frame {
+    flex: 1 1 calc(50% - 0.5rem);
+    height: 120px;
+  }
+}
+
+
+/* —— Interest sectie —— */
+.interest {
+  padding: 4rem 1rem;
+  background: #414141;
+  color: #fff;
+}
+
+/* Grote koptekst */
+.interest-header {
+  max-width: 900px;
+  margin: 0 auto 2rem;
+}
+.interest-header h2 {
+  font-family: var(--font-heading);
+  font-size: 2.5rem;
+  line-height: 1.2;
+  padding-left: 1.5rem;
+  border-left: 4px solid var(--primary-color);
+  color: #fff;
+}
+
+/* Drie cards */
+.interest-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  gap: 2rem;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.interest-item {
+  flex: 1 1 250px;
+  background: var(--bg-light);
+  border-radius: 0.2rem;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.interest-icon {
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 1rem;
+}
+.interest-item p {
+  font-family: 'Ubuntu', sans-serif;
+  font-size: 1rem;
+  line-height: 1.4;
+  color: var(--text-dark);
+}
+
+/* Responsief @ 768px */
+@media (max-width: 768px) {
+  .interest-header h2 {
+    font-size: 1.75rem;
+    padding-left: 1rem;
+  }
+  .interest-inner {
+    flex-direction: column;
+    align-items: center;
+  }
+  .interest-item {
+    max-width: 80%;
+    margin-bottom: 1.5rem;
+  }
+}
+
+/* Extra responsief @ 480px */
+@media (max-width: 480px) {
+  .interest-header h2 {
+    font-size: 1.5rem;
+    padding-left: 0.75rem;
+  }
+}
+
+/* basis hover-transition voor alle cards */
+.interest-item {
+  transition:
+    transform 0.3s ease,
+    background-color 0.3s ease,
+    box-shadow 0.3s ease;
+  transform-origin: center bottom; /* rotatiepunt onderaan */
+}
+
+/* kaart 1: iets naar links */
+.interest-item:nth-child(1):hover {
+  transform: translateY(-8px) rotate(-4deg);
+}
+
+/* kaart 2: iets naar rechts */
+.interest-item:nth-child(2):hover {
+  transform: translateY(-8px) rotate(-3deg);
+}
+
+/* kaart 3: een iets grotere tilt naar links */
+.interest-item:nth-child(3):hover {
+  transform: translateY(-8px) rotate(-6deg);
+}
+
+/* achtergrond, schaduw en kleur overal hetzelfde */
+.interest-item:hover {
+  background-color: var(--primary-color);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  color: #fff;
+}
+
+/* tekst wit */
+.interest-item p {
+  transition: color 0.3s ease;
+}
+.interest-item:hover p {
+  color: #fff;
+}
+
+/* icon wit via filter (bij <img>) */
+.interest-item .interest-icon {
+  transition: filter 0.3s ease;
+}
+.interest-item:hover .interest-icon {
+  filter: brightness(0) invert(1);
+}
+
+/* —— Animatie: fadeInUp —— */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Zorg dat teksten én frames eerst onzichtbaar zijn */
+.hero-text h1,
+.hero-text h2,
+.btn-primary,
+.frame {
+  opacity: 0;
+}
+
+/* H1 */
+.hero-text h1 {
+  animation: fadeInUp 0.8s ease-out 0.2s forwards;
+}
+
+/* H2 */
+.hero-text h2 {
+  animation: fadeInUp 0.8s ease-out 0.4s forwards;
+}
+
+/* Button */
+.btn-primary {
+  animation: fadeInUp 0.8s ease-out 0.6s forwards;
+}
+
+/* Frames – met kleine delays ertussen */
+#frame1 {
+  animation: fadeInUp 0.8s ease-out 0.7s forwards;
+}
+#frame2 {
+  animation: fadeInUp 0.8s ease-out 0.9s forwards;
+}
+#frame3 {
+  animation: fadeInUp 0.8s ease-out 1.1s forwards;
+}
+
+
+/* —— Counters Sectie —— */
+.counters {
+  position: relative;
+  padding: 4rem 1rem;
+  background: #fff;
+  color: var(--text-dark);
+  text-align: center;
+  overflow: hidden;
+}
+
+/* Sectie‑specifieke confetti‑canvas */
+#counters-confetti {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.counters-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.counter-item {
+  flex: 1 1 200px;
+}
+
+.counter-icon {
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 1rem;
+}
+
+.counter-number {
+  font-family: var(--font-heading);
+  font-size: 3rem;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.counter-label {
+  font-family: 'Ubuntu', sans-serif;
+  font-size: 1rem;
+  color: #666;
+}
+
+/* Responsive @ 768px */
+@media (max-width: 768px) {
+  .counters-inner {
+    flex-direction: column;
+    align-items: center;
+  }
+  .counter-item {
+    max-width: 80%;
+    margin-bottom: 1.5rem;
+  }
+}
+
+/* Grote koptekst */
+.counters-header {
+  max-width: 900px;
+  margin: 0 auto 2rem;
+}
+.counters-header h2 {
+  font-family: var(--font-heading);
+  font-size: 2.5rem;
+  line-height: 1.2;
+  padding-left: 1.5rem;
+  border-left: 4px solid var(--primary-color);
+}
+
+/* —— Parallax‑section met CSS‑only achtergrond —— */
+.parallax-section {
+  height: 100vh;
+  background-image: url('Img/parallax-bg.png');
+  background-position: center;
+  background-size: cover;
+  background-attachment: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Video bovenop de background */
+.video-container {
+  position: relative;
+  z-index: 1;
+  padding: 2rem;
+}
+
+.video {
+  max-width: 90%;
+  max-height: 80%;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  border-radius: 0.5rem;
+}
+
+/* —— Roadmap Sectie —— */
+.roadmap-section {
+  padding: 4rem 1rem;
+  background: #fff;
+  text-align: center;
+}
+.roadmap-header {
+  font-family: var(--font-heading);
+  font-size: 2.5rem;
+  margin-bottom: 3rem;
+  color: var(--text-dark);
+}
+
+/* horizontale lijn */
+.roadmap {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  list-style: none;
+  padding: 0;
+  margin: 0 auto;
+  max-width: 1400px;
+}
+.roadmap::before {
+  content: '';
+  position: absolute;
+  top: 2.5rem; /* halverwege checkpoint-cirkel (3rem/2) + border */
+  left: 5%;
+  right: 5%;
+  height: 4px;
+  background: var(--bg-light);
+  z-index: 1;
+}
+
+/* elke stap */
+.step {
+  position: relative;
+  width: 30%;
+  opacity: 0.5;
+  transition: opacity 0.5s ease;
+  text-align: center;
+  z-index: 2;
+}
+.step .checkpoint {
+  width: 3rem;
+  height: 3rem;
+  margin: 0 auto 1rem;
+  border-radius: 50%;
+  background: #fff;
+  border: 4px solid var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.4s ease, transform 0.4s ease;
+}
+.step .checkpoint img {
+  width: 60%;
+  height: 60%;
+}
+.step h3 {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-dark);
+}
+.step p {
+  font-family: 'Ubuntu', sans-serif;
+  font-size: 1rem;
+  color: #666;
+  margin: 0;
+}
+
+/* actieve stap styling */
+.step.active {
+  opacity: 1;
+}
+.step.active .checkpoint {
+  background: var(--primary-color);
+  transform: scale(1.2);
+}
+
+/* responsief */
+@media (max-width: 768px) {
+  .roadmap {
+    flex-direction: column;
+    align-items: center;
+  }
+  .roadmap::before {
+    display: none;
+  }
+  .step {
+    width: 80%;
+    margin-bottom: 2rem;
+  }
+}
+
+/* —— Testimonials Sectie —— */
+.testimonials {
+  padding: 4rem 1rem;
+ background: #414141;
+  color: var(--text-dark);
+  text-align: center;
+}
+.testimonials-header {
+  font-family: var(--font-heading);
+  font-size: 2.5rem;
+  margin-bottom: 2.5rem;
+  color: #fff;
+}
+
+/* Grid van cards */
+.testimonials-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2rem;
+  perspective: 1000px; /* nodig voor 3D tilt */
+}
+
+/* Basis styling card */
+.testimonial-card {
+  background: var(--bg-light);
+  border-radius: 0.5rem;
+  padding: 2rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  transition:
+    transform 0.3s ease,
+    background-color 0.3s ease,
+    color 0.3s ease,
+    box-shadow 0.3s ease;
+  transform-style: preserve-3d;
+}
+
+/* Tekst en auteur */
+.testimonial-text {
+  font-family: 'Ubuntu', sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+.testimonial-author {
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Hover‑state */
+.testimonial-card:hover {
+  background: var(--primary-color);
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  /* fallback tilt if JS is disabled: */
+  transform: rotateY(5deg) translateY(-8px);
+}
+
+/* Zorg dat child-tekst meeverft */
+.testimonial-card:hover .testimonial-text,
+.testimonial-card:hover .testimonial-author {
+  color: inherit;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .testimonials-header {
+    font-size: 2rem;
+  }
+  .testimonials-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* —— Info Secties —— */
+.info-section {
+  display: flex;
+  justify-content: space-between;    /* kolommen links en rechts uitlijnen */
+  align-items: center;               /* verticale centering */
+  gap: 2rem;
+  padding: 4rem 1rem;
+  max-width: 1200px;                 /* container breedte */
+  margin: 0 auto;                    /* container centreren */
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.info-section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* wissel layout */
+.info-left  { flex-direction: row; }
+.info-right { flex-direction: row-reverse; }
+
+/* Kolommen elk 48% breed, content in kolom flex-container */
+.info-content,
+.info-image {
+  flex: 0 0 48%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;          /* verticale centering in kolom */
+}
+
+/* Tekstblok: left‐aligned binnen gecentreerde kolom */
+.info-content {
+  align-items: flex-start;           /* zet alle items links in kolom */
+  text-align: left;                  /* zet tekst links uitgelijnd */
+  max-width: 600px;
+}
+
+/* Kop */
+.info-content h2 {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: var(--text-dark);
+}
+
+/* Paragrafen & lijst */
+.info-content p,
+.info-content ul {
+  font-family: 'Ubuntu', sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+.info-content ul {
+  list-style: disc inside;
+}
+
+/* Button link */
+.info-content a.btn-secondary {
+  display: inline-block;
+  background: var(--primary-color);
+  color: #fff;
+  padding: 0.75em 1.5em;
+  text-decoration: none;
+  border-radius: 0.275rem;
+  font-weight: 500;
+  margin-left: 0;                    /* geen extra marge */
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+.info-content a.btn-secondary:hover {
+  background: #5fa01a;
+  transform: translateY(-3px);
+}
+
+/* Afbeeldingblok */
+.info-image {
+  align-items: center;               /* afbeelding horizontaal centreren */
+}
+.info-image img {
+  max-width: 100%;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  display: block;
+  margin: 0 auto;
+}
+
+/* Responsief @ 768px */
+@media (max-width: 768px) {
+  .info-section {
+    flex-direction: column!important;
+  }
+  .info-content,
+  .info-image {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+  .info-content {
+    margin-bottom: 2rem;
+  }
+}

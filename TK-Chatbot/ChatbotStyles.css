@@ -1,0 +1,181 @@
+/* Container for the chat widget */
+#chat-widget {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 300px;
+  font-family: Arial, sans-serif;
+  z-index: 1000;
+}
+
+/* Toggle button */
+#chat-toggle {
+  background: #59a0a1;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+#chat-toggle:hover {
+  background: #4a8586;
+}
+
+/* Bounce animation */
+@keyframes bounce {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+#chat-toggle.animate {
+  animation: bounce 0.3s ease;
+}
+
+/* Chat window */
+#chat-window {
+  display: none;
+  flex-direction: column;
+  height: 450px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+/* Logo above header */
+#chat-logo {
+  display: block;
+  margin: 0 auto;
+  max-width: 120px;
+  height: auto;
+  background: #59a0a1;
+  padding: 8px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+/* Header inside chat */
+#chat-header {
+  position: relative;
+  background: #59a0a1;
+  color: #fff;
+  padding: 10px;
+  text-align: center;
+  font-weight: bold;
+}
+#chat-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* Messages container */
+#chat-messages {
+  flex: 1;
+  padding: 10px;
+  background: #f5f5f5;
+  overflow-y: auto;
+}
+.message {
+  margin-bottom: 10px;
+  padding: 8px;
+  border-radius: 6px;
+  max-width: 80%;
+  line-height: 1.4;
+  clear: both;
+}
+.message.user {
+  background: #59a0a1;
+  color: #fff;
+  float: right;
+}
+.message.bot {
+  background: #e0e0e0;
+  float: left;
+}
+
+/* Input area */
+#chat-input-area {
+  display: flex;
+  border-top: 1px solid #ddd;
+}
+#chat-input {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  outline: none;
+  font-size: 14px;
+}
+
+/* Send button with icon alignment */
+#send-button {
+  background: #59a0a1;
+  color: #fff;
+  border: none;
+  padding: 0 20px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  transition: background 0.2s ease;
+}
+#send-button:hover {
+  background: #4a8586;
+}
+
+/* Send button icon */
+.send-icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
+}
+
+
+/* Shrink the logo in the header */
+#chat-header #chat-logo {
+  max-width: 40px;   /* adjust as needed */
+  height: auto;
+  margin-bottom: 5px;
+}
+
+/* Define the entrance animation */
+@keyframes bubbleIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Apply it to every new message */
+.message {
+  /* existing styles… */
+  animation: bubbleIn 0.25s ease-out;
+}
+
+/* Ensure the chat toggle sits fixed in the viewport corner */
+#chat-toggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1001; /* above other elements */
+}
+

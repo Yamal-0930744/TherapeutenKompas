@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Therapeutenkompas Chatbot Widget</title>
+  <link rel="stylesheet" href="ChatbotStyles.css" />
+  <style>
+    /* Optional layout tweak */
+    #chat-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .chat-controls {
+      display: flex;
+      gap: 10px;
+    }
+
+    .chat-controls button {
+      background: none;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .chat-controls button:hover {
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+  <div id="chat-widget">
+    <button id="chat-toggle">💬</button>
+
+    <div id="chat-window">
+      <div id="chat-header">
+        <img id="chat-logo" src="TKLOGO.png" alt="Therapeutenkompas Logo" />
+        <span id="chat-title">Therapeutenkompas Bot</span>
+        <div class="chat-controls">
+          <button id="chat-reset" title="Gesprek wissen">🔁</button>
+          <button id="chat-close" title="Sluiten">×</button>
+        </div>
+      </div>
+
+      <div id="chat-messages"></div>
+
+      <div id="chat-input-area">
+        <input
+          type="text"
+          id="chat-input"
+          placeholder="Type hier je antwoord..."
+        />
+        <button id="send-button">
+          <img src="paper-plane-tilt.svg" alt="Send" class="send-icon" />
+          Verstuur
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const chatToggle = document.getElementById('chat-toggle');
+    const chatWindow = document.getElementById('chat-window');
+    const chatClose = document.getElementById('chat-close');
+    const chatReset = document.getElementById('chat-reset');
+    const messagesContainer = document.getElementById('chat-messages');
+    const chatInput = document.getElementById('chat-input');
+    const sendButton = document.getElementById('send-button');
+
+    const questions = [
+      "Welke klachten ervaar je?",
+      "Waar woon je?",
+      "Heb je een voorkeur voor een bepaald type therapie?",
+      "Is er nog iets anders dat belangrijk is voor jou?"
+    ];
+    let currentQuestion = 0;
+    const collectedAnswers = [];
+    let collectionComplete = false;
+
+    let chatHistory = JSON.parse(localStorage.getItem('tk_chat_history') || '[]');
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (chatHistory.length > 0) {
+        chatHistory.forEach(msg => appendMessage(msg.content, msg.role === 'user' ? 'user' : 'bot'));
+      }
+    });
+
+    chatToggle.addEventListener('click', () => {
+      chatToggle.classList.add('animate');
+      chatToggle.addEventListener(
+        'animationend',
+        () => {
+          chatToggle.classList.remove('animate');
+          chatToggle.style.display = 'none';
+          chatWindow.style.display = 'flex';
+
+          if (chatHistory.length === 0) askNextQuestion();
+        },
+        { once: true }
+      );
+    });
+
+    chatClose.addEventListener('click', () => {
+      chatWindow.style.display = 'none';
+      chatToggle.style.display = 'flex';
+    });
+
+    chatReset.addEventListener('click', () => {
+      resetChat();
+    });
+
+    function resetChat() {
+      chatWindow.style.display = 'none';
+      chatToggle.style.display = 'flex';
+      messagesContainer.innerHTML = '';
+      currentQuestion = 0;
+      collectedAnswers.length = 0;
+      collectionComplete = false;
+      chatHistory.length = 0;
+      localStorage.removeItem('tk_chat_history');
+    }
+
+    function askNextQuestion() {
+      if (currentQuestion < questions.length) {
+        appendMessage(questions[currentQuestion], 'bot');
+        chatHistory.push({ role: 'assistant', content: questions[currentQuestion] });
+        localStorage.setItem('tk_chat_history', JSON.stringify(chatHistory));
+      } else {
+        const bundled = collectedAnswers.join(' | ');
+        const finalMsg = "Dank je! Ik zoek nu de beste match voor je...";
+        appendMessage(finalMsg, 'bot');
+        chatHistory.push({ role: 'assistant', content: finalMsg });
+        chatHistory.push({ role: 'user', content: bundled });
+        localStorage.setItem('tk_chat_history', JSON.stringify(chatHistory));
+        collectionComplete = true;
+
+        sendToApi(chatHistory);
+      }
+    }
+
+    function handleSend() {
+      const text = chatInput.value.trim();
+      if (!text) return;
+      appendMessage(text, 'user');
+      chatInput.value = '';
+      chatHistory.push({ role: 'user', content: text });
+      localStorage.setItem('tk_chat_history', JSON.stringify(chatHistory));
+
+      if (!collectionComplete) {
+        collectedAnswers.push(`${questions[currentQuestion]} ${text}`);
+        currentQuestion++;
+        setTimeout(askNextQuestion, 500);
+      } else {
+        sendToApi(chatHistory);
+      }
+    }
+
+    sendButton.addEventListener('click', handleSend);
+    chatInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') handleSend();
+    });
+
+    function sendToApi(history) {
+      fetch('http://localhost:3000/proxy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: history })
+      })
+        .then((res) => {
+          const contentType = res.headers.get('content-type');
+          return contentType.includes('application/json') ? res.json() : res.text();
+        })
+        .then((data) => {
+          const reply = typeof data === 'string'
+            ? data
+            : data.reply || JSON.stringify(data);
+
+          appendMessage(reply, 'bot');
+          chatHistory.push({ role: 'assistant', content: reply });
+          localStorage.setItem('tk_chat_history', JSON.stringify(chatHistory));
+        })
+        .catch(() => {
+          appendMessage('Er is iets misgegaan, probeer het nogmaals.', 'bot');
+        });
+    }
+
+    function appendMessage(text, sender) {
+      const msg = document.createElement('div');
+      msg.classList.add('message', sender);
+      msg.textContent = text;
+      messagesContainer.appendChild(msg);
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+  </script>
+</body>
+</html>

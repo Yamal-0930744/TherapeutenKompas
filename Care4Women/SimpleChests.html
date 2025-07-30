@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Simple Chests</title>
+  <style>
+    body { margin: 0; background: white; overflow: hidden; font-family: sans-serif; }
+    canvas { display: block; }
+
+    #instrModal, #modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      justify-content: center;
+      align-items: center;
+      background: rgba(0,0,0,0.6);
+      z-index: 10;
+    }
+    #instrModalContent, #modalContent {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    #boxText {
+      position: absolute;
+      top: 50%; left: 50%; transform: translate(-50%, -250%);
+      background: rgba(255,255,255,0.9);
+      padding: 12px 20px; border-radius: 10px;
+      font-size: 24px; font-weight: bold; color: hotpink;
+      z-index: 5; display: none;
+    }
+    button {
+      margin-top: 15px; padding: 10px 20px;
+      border: none; background: hotpink; color: white;
+      border-radius: 8px; cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="boxText">OPEN ME!</div>
+
+  <div id="instrModal">
+    <div id="instrModalContent">
+      <h2>Click to open the box</h2>
+      <p>Een boodschap wacht op je!</p>
+      <button id="startBtn">Open</button>
+    </div>
+  </div>
+
+  <div id="modal">
+    <div id="modalContent">
+      <h2>🎉 Schatkist geopend!</h2>
+      <p id="modalMsg">Je hebt een boodschap ontvangen.</p>
+      <button id="closeBtn">Sluiten</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/three@0.146.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.146.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script>
+    const chestMessages = [
+      "Je eerste stap is gezet – wees trots.",
+      "Vertrouw op jezelf, ook als het spannend is.",
+      "Kleine stappen zijn ook vooruitgang.",
+      "Jij mag er zijn, precies zoals je bent.",
+      "Onzekerheid hoort bij groei.",
+      "Wat jij voelt, doet ertoe.",
+      "Je doet het beter dan je denkt.",
+      "Fouten maken is oké – blijf proberen.",
+      "Blijf dichtbij wat voor jou klopt.",
+      "Elke keuze brengt je dichter bij jezelf.",
+      "Je hoeft het niet allemaal alleen te doen.",
+      "Dit is nog maar het begin van iets moois."
+    ];
+
+    // Scene setup
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xffffff);
+    const camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.1, 100);
+    camera.position.set(0,10,35);
+    camera.lookAt(0,0,0);
+    const renderer = new THREE.WebGLRenderer({antialias:true});
+    renderer.setSize(innerWidth,innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    window.addEventListener('resize', ()=>{
+      camera.aspect = innerWidth/innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(innerWidth,innerHeight);
+    });
+
+    // Lights
+    const ambient = new THREE.AmbientLight(0xffffff,0.4);
+    const directional = new THREE.DirectionalLight(0xffffff,1);
+    directional.position.set(5,10,7);
+    scene.add(ambient, directional);
+
+    // Loaders
+    const loader = new THREE.GLTFLoader();
+    const textureLoader = new THREE.TextureLoader();
+    // Apply the color map for the box
+    // Load the correct color map texture (located in assets/textures)
+const boxTexture = textureLoader.load('./assets/textures/colormap.png');
+boxTexture.encoding = THREE.sRGBEncoding;
+boxTexture.flipY = false;
+
+    let box, boxClicked = false;
+    loader.load('./assets/box-large.glb', gltf => {
+      box = gltf.scene;
+      box.scale.set(6,6,6);
+      box.position.set(0,0,0);
+                  // manually color box: differentiate lid (strip) and body
+      box.traverse(c => {
+        if (c.isMesh) {
+          // determine lid by vertical position (y > 0.1)
+          const isLid = c.position.y > 0.1;
+          c.material = new THREE.MeshStandardMaterial({
+            color: isLid ? 0x87CEEB /* light blue strip */ : 0x8A2BE2 /* deep purple body */, 
+            metalness: 0.2,
+            roughness: 0.8
+          });
+          c.castShadow = c.receiveShadow = true;
+        }
+      });
+      scene.add(box);
+      document.getElementById('boxText').style.display = 'block';
+    });
+
+    // Chests and paths
+    const mixers = [], chests = [], paths = [];
+    let activeIndex = 0;
+    const spacing = 15, chestScale = 1.8;
+    const chestPositions = Array.from({length:12}, (_,i) => {
+      const row = Math.floor(i/3), col = i%3;
+      return { x:(col-1)*spacing, y:(1-row)*spacing*0.5, z:0 };
+    });
+
+    function loadChests() {
+      chestPositions.forEach((pos,i) => {
+        loader.load('./assets/chest.glb', gltf => {
+          const chest = gltf.scene;
+          chest.scale.set(chestScale,chestScale,chestScale);
+          chest.position.set(pos.x,pos.y,pos.z);
+          chest.rotation.y = 0;
+
+          chest.userData = { index:i, opened:false, meshes:[] };
+          const mixer = new THREE.AnimationMixer(chest);
+          const clip = gltf.animations.find(a=>a.name.toLowerCase().includes('open'))||gltf.animations[0];
+          chest.userData.mixer = mixer;
+          chest.userData.clip = clip;
+          mixers.push(mixer);
+
+          chest.traverse(c => {
+            if(c.isMesh) {
+              c.userData.rootChest = chest;
+              chest.userData.meshes.push(c);
+            }
+          });
+
+          // set chest materials
+          chest.userData.meshes.forEach(m => {
+            const isLid = m.name.toLowerCase().includes('lid');
+            m.material = new THREE.MeshStandardMaterial({
+              color: isLid?0xaaaaaa:0x999999,
+              metalness:0.1, roughness:0.95
+            });
+          });
+
+          // first chest color
+          if(i===0) chest.userData.meshes.forEach(m => {
+            const isLid = m.name.toLowerCase().includes('lid');
+            m.material.color.setHex(isLid?0x9e4a6e:0xc07291);
+          });
+
+          scene.add(chest);
+          chests[i] = chest;
+
+          // create path tube
+          if(i>0) {
+            const prev = chestPositions[i-1], curr = chestPositions[i];
+            const ofs = 2.5;
+            const from = new THREE.Vector3(prev.x+ofs, prev.y, prev.z);
+            const to   = new THREE.Vector3(curr.x-ofs, curr.y, curr.z);
+            const mid1 = from.clone().lerp(to,0.33).add(new THREE.Vector3(0,3,0));
+            const mid2 = from.clone().lerp(to,0.66).add(new THREE.Vector3(0,3,0));
+            const curve = new THREE.CatmullRomCurve3([from,mid1,mid2,to]);
+            const tube = new THREE.Mesh(
+              new THREE.TubeGeometry(curve,64,0.2,8,false),
+              new THREE.MeshStandardMaterial({ color:0x888888, emissive:0x000000, transparent:true, opacity:0.5 })
+            );
+            scene.add(tube);
+            paths[i-1] = { mesh: tube, progress: 0, active: false };
+          }
+        });
+      });
+    }
+
+    document.getElementById('startBtn').onclick = () => {
+      document.getElementById('instrModal').style.display = 'none';
+      scene.remove(box);
+      loadChests();
+    };
+
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    window.addEventListener('click', e => {
+      mouse.x = (e.clientX/innerWidth)*2-1;
+      mouse.y = -(e.clientY/innerHeight)*2+1;
+      raycaster.setFromCamera(mouse,camera);
+      const intersects = raycaster.intersectObjects(scene.children,true);
+      // box click
+      if(box && !boxClicked && intersects.some(i=>i.object.parent===box)) {
+        document.getElementById('instrModal').style.display='flex';
+        boxClicked=true;
+        document.getElementById('boxText').style.display='none';
+        return;
+      }
+      // chest click
+      for(const i of intersects) {
+        const chest = i.object.userData.rootChest;
+        if(!chest) continue;
+        const idx = chest.userData.index;
+        if(idx===activeIndex && !chest.userData.opened) {
+          chest.rotation.y = 0;
+          const action = chest.userData.mixer.clipAction(chest.userData.clip);
+          action.reset(); action.clampWhenFinished=true; action.setLoop(THREE.LoopOnce,1); action.play();
+          chest.userData.opened=true;
+          document.getElementById('modalMsg').textContent=chestMessages[idx];
+          document.getElementById('modal').style.display='flex';
+        }
+        break;
+      }
+    });
+
+    document.getElementById('closeBtn').onclick = () => {
+      document.getElementById('modal').style.display='none';
+      activeIndex++;
+      const next = chests.find(c=>c.userData.index===activeIndex);
+      if(next) {
+        next.rotation.y=0;
+        next.userData.meshes.forEach(m=>{
+          const isLid = m.name.toLowerCase().includes('lid');
+          m.material.color.setHex(isLid?0x9e4a6e:0xc07291);
+        });
+        const p=paths[activeIndex-1]; if(p) p.active=true;
+      }
+    };
+
+    const clock=new THREE.Clock();
+    function animate() {
+      requestAnimationFrame(animate);
+      const delta=clock.getDelta(); mixers.forEach(m=>m.update(delta));
+      if(box && !boxClicked) box.rotation.y+=0.01;
+      chests.forEach(c=>{ if(!c.userData.opened) c.rotation.y+=0.01; });
+      paths.forEach(p=>{ if(p.active && p.progress<1) {
+        p.progress+=0.015; const g=Math.min(p.progress,1);
+        p.mesh.material.emissive.setRGB(g*1.2,g*0.2,g*0.6);
+        p.mesh.material.color.lerp(new THREE.Color(0x9e4a6e),g);
+      }});
+      renderer.render(scene,camera);
+    }
+    animate();
+  </script>
+</body>
+</html>

@@ -74,7 +74,7 @@
   <div id="instrModal">
     <div id="instrModalContent">
       <div id="chestPreview"></div>
-      <h2>Welkom bij VitalFem!</h2>
+      <h2>Your personal health journey!</h2>
       <p>
         Gebruik de pijltoetsen <strong>↑ ↓ ← →</strong> om je personage te verplaatsen.<br>
         Je doel is om alle <strong>12 schatkisten</strong> te verzamelen.<br>
@@ -113,53 +113,53 @@
     });
 
     // Chest preview scene in modal
-const chestScene = new THREE.Scene();
-const chestCamera = new THREE.PerspectiveCamera(60, 1, 0.1, 10);
-chestCamera.position.set(0, 0, 2);
-const chestRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-chestRenderer.setSize(200, 200);
-document.getElementById('chestPreview').appendChild(chestRenderer.domElement);
+    const chestScene = new THREE.Scene();
+    const chestCamera = new THREE.PerspectiveCamera(60, 1, 0.1, 10);
+    chestCamera.position.set(0, 0, 2);
+    const chestRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    chestRenderer.setSize(200, 200);
+    document.getElementById('chestPreview').appendChild(chestRenderer.domElement);
 
-const gltfLoader = new THREE.GLTFLoader();
-let chestModel;
-gltfLoader.load('./assets/chest.glb', gltf => {
-  chestModel = gltf.scene;
-  chestModel.scale.set(0.8, 0.8, 0.8);
-  chestModel.traverse(c => {
-    if (!c.isMesh) return;
-    if (c.name.toLowerCase().includes('lid')) {
-      c.material = new THREE.MeshStandardMaterial({
-        color: 0xffd700, metalness: 0.8, roughness: 0.2
+    const gltfLoader = new THREE.GLTFLoader();
+    let chestModel;
+    gltfLoader.load('./assets/chest.glb', gltf => {
+      chestModel = gltf.scene;
+      chestModel.scale.set(0.8, 0.8, 0.8);
+      chestModel.traverse(c => {
+        if (!c.isMesh) return;
+        if (c.name.toLowerCase().includes('lid')) {
+          c.material = new THREE.MeshStandardMaterial({
+            color: 0xffd700, metalness: 0.8, roughness: 0.2
+          });
+        } else {
+          c.material = new THREE.MeshStandardMaterial({
+            color: 0x8B4513, metalness: 0.2, roughness: 0.8
+          });
+        }
+        c.castShadow = c.receiveShadow = true;
       });
-    } else {
-      c.material = new THREE.MeshStandardMaterial({
-        color: 0x8B4513, metalness: 0.2, roughness: 0.8
-      });
+      chestScene.add(chestModel);
+
+      // Lights for the preview scene
+      const ambient = new THREE.AmbientLight(0xffffff, 0.6);
+      chestScene.add(ambient);
+
+      const directional = new THREE.DirectionalLight(0xffffff, 1);
+      directional.position.set(2, 4, 2);
+      chestScene.add(directional);
+
+      // Start animation loop after chest is loaded
+      animateChest();
+    });
+
+    function animateChest() {
+      requestAnimationFrame(animateChest);
+      if (chestModel) {
+        chestModel.rotation.y += 0.02;
+        chestModel.rotation.x = 0.2 * Math.sin(Date.now() * 0.002);
+      }
+      chestRenderer.render(chestScene, chestCamera);
     }
-    c.castShadow = c.receiveShadow = true;
-  });
-  chestScene.add(chestModel);
-
-  // Lights for the preview scene
-  const ambient = new THREE.AmbientLight(0xffffff, 0.6);
-  chestScene.add(ambient);
-
-  const directional = new THREE.DirectionalLight(0xffffff, 1);
-  directional.position.set(2, 4, 2);
-  chestScene.add(directional);
-
-  // Start animation loop after chest is loaded
-  animateChest();
-});
-
-function animateChest() {
-  requestAnimationFrame(animateChest);
-  if (chestModel) {
-    chestModel.rotation.y += 0.02;
-    chestModel.rotation.x = 0.2 * Math.sin(Date.now() * 0.002);
-  }
-  chestRenderer.render(chestScene, chestCamera);
-}
 
 
     // Main game setup

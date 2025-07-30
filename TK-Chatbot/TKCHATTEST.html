@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Therapeutenkompas AI Chat</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; background: #f9f9f9; }
+    #chat { border: 1px solid #ccc; padding: 10px; max-width: 600px; margin: auto; background: white; }
+    .message { margin: 5px 0; padding: 8px; border-radius: 5px; max-width: 80%; }
+    .user { background: #def; align-self: flex-end; }
+    .bot { background: #eee; }
+    #messages { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
+    #inputArea { display: flex; gap: 10px; }
+    input[type="text"] { flex: 1; padding: 8px; font-size: 1em; }
+    button { padding: 8px 16px; font-size: 1em; }
+  </style>
+</head>
+<body>
+
+<div id="chat">
+  <h2>Therapeutenkompas AI Chat</h2>
+  <div id="messages"></div>
+  <div id="inputArea">
+    <input type="text" id="userInput" placeholder="Type your question..." />
+    <button onclick="sendMessage()">Send</button>
+  </div>
+</div>
+
+<script>
+  function appendMessage(text, sender) {
+    const div = document.createElement('div');
+    div.className = `message ${sender}`;
+    div.textContent = text;
+    document.getElementById('messages').appendChild(div);
+  }
+
+  function sendMessage() {
+    const input = document.getElementById('userInput');
+    const message = input.value.trim();
+    if (!message) return;
+
+    appendMessage(message, 'user');
+    input.value = '';
+
+    fetch(`http://localhost:3000/proxy?question=${encodeURIComponent(message)}&verbose=true`)
+      .then(res => {
+        const contentType = res.headers.get('content-type');
+        return contentType.includes('application/json') ? res.json() : res.text();
+      })
+      .then(data => {
+        const reply = typeof data === 'string' ? data : JSON.stringify(data);
+        appendMessage(reply, 'bot');
+      })
+      .catch(err => {
+        appendMessage('❌ Er ging iets mis met het ophalen van het antwoord.', 'bot');
+        console.error(err);
+      });
+  }
+
+  document.getElementById('userInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') sendMessage();
+  });
+</script>
+
+</body>
+</html>
