@@ -1,0 +1,39 @@
+<!--
+  Component: Werkwijze / Process
+  Schema: pages.process.steps[]
+  Placeholders used by agents:
+    - {{pages.process.steps[].title}}
+    - {{pages.process.steps[].text}}
+  Notes:
+    - Describe therapy process in 3–5 clear steps.
+    - Keep each step ≤ 40 words.
+    - Common pattern: Intake → Traject → Evaluatie.
+-->
+<section class="process" aria-labelledby="process-title">
+  <div class="container">
+    <h2 id="process-title">Werkwijze</h2>
+    <div class="grid process-steps">
+      {{#if pages.process.steps}}
+        {{#each pages.process.steps}}
+        <article class="card step-card">
+          <h3>{{title}}</h3>
+          <p>{{text}}</p>
+        </article>
+        {{/each}}
+      {{else}}
+        <article class="card step-card">
+          <h3>Intake</h3>
+          <p>We bespreken jouw hulpvraag en kijken of de aanpak past bij wat je zoekt.</p>
+        </article>
+        <article class="card step-card">
+          <h3>Traject</h3>
+          <p>In sessies werken we samen aan inzicht, rust en verandering.</p>
+        </article>
+        <article class="card step-card">
+          <h3>Evaluatie</h3>
+          <p>We kijken terug op je groei en bespreken wat nog nodig is.</p>
+        </article>
+      {{/if}}
+    </div>
+  </div>
+</section>

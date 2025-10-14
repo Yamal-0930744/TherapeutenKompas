@@ -1,0 +1,119 @@
+<!--
+  Partial/Page: Privacyverklaring (AVG/GDPR)
+  Schema: pages.privacy + site.contact
+  Placeholders:
+    - {{pages.privacy.controller_name}}
+    - {{pages.privacy.controller_address}}
+    - {{pages.privacy.controller_email}}
+    - {{pages.privacy.controller_phone}}
+    - {{pages.privacy.processing_purposes[]}}
+    - {{pages.privacy.legal_bases[]}}           // e.g., "toestemming", "overeenkomst", "gerechtvaardigd belang"
+    - {{pages.privacy.categories_personal_data[]}}
+    - {{pages.privacy.retention_summary}}
+    - {{pages.privacy.processors[]}}            // names or "system – purpose"
+    - {{pages.privacy.third_countries_note}}    // if applicable
+    - {{pages.privacy.data_subject_rights_note}} // optional custom note
+    - {{pages.privacy.cookies_note}}            // if using cookies/analytics
+    - {{pages.privacy.last_updated_iso}}        // YYYY-MM-DD
+-->
+<section class="privacy" aria-labelledby="privacy-title">
+  <div class="container">
+    <h1 id="privacy-title">Privacyverklaring</h1>
+    <p class="muted" style="color:#6b7280">Laatst bijgewerkt: 
+      <time datetime="{{pages.privacy.last_updated_iso}}">{{pages.privacy.last_updated_iso}}</time>
+    </p>
+
+    <div class="card">
+      <h2>Verwerkingsverantwoordelijke</h2>
+      <p>
+        {{pages.privacy.controller_name}}<br>
+        {{pages.privacy.controller_address}}<br>
+        E-mail: <a href="mailto:{{pages.privacy.controller_email}}">{{pages.privacy.controller_email}}</a><br>
+        Tel: <a href="tel:{{pages.privacy.controller_phone}}">{{pages.privacy.controller_phone}}</a>
+      </p>
+    </div>
+
+    <div class="grid" style="margin-top:14px">
+      <article class="card">
+        <h2>Doelen van de verwerking</h2>
+        {{#if pages.privacy.processing_purposes}}
+        <ul>
+          {{#each pages.privacy.processing_purposes}}
+            <li>{{this}}</li>
+          {{/each}}
+        </ul>
+        {{else}}
+          <p>Afspraakplanning, communicatie en dossiervorming voor therapietrajecten.</p>
+        {{/if}}
+      </article>
+
+      <article class="card">
+        <h2>Rechtsgrond</h2>
+        {{#if pages.privacy.legal_bases}}
+        <ul>
+          {{#each pages.privacy.legal_bases}}
+            <li>{{this}}</li>
+          {{/each}}
+        </ul>
+        {{else}}
+          <p>Toestemming, uitvoering van een overeenkomst en/of gerechtvaardigd belang.</p>
+        {{/if}}
+      </article>
+
+      <article class="card">
+        <h2>Welke gegevens</h2>
+        {{#if pages.privacy.categories_personal_data}}
+        <ul>
+          {{#each pages.privacy.categories_personal_data}}
+            <li>{{this}}</li>
+          {{/each}}
+        </ul>
+        {{else}}
+          <p>Contactgegevens, correspondentie en afspraakgegevens. Geen bijzondere gegevens via het contactformulier.</p>
+        {{/if}}
+      </article>
+
+      <article class="card">
+        <h2>Bewaartermijnen</h2>
+        <p>{{pages.privacy.retention_summary|default:We bewaren gegevens niet langer dan nodig is voor het doel van de verwerking en conform wettelijke bewaartermijnen.}}</p>
+      </article>
+
+      <article class="card">
+        <h2>Verwerkers</h2>
+        {{#if pages.privacy.processors}}
+        <ul>
+          {{#each pages.privacy.processors}}
+            <li>{{this}}</li>
+          {{/each}}
+        </ul>
+        {{else}}
+          <p>We maken waar nodig gebruik van verwerkers voor hosting, e-mail en boekhouding. Met deze partijen zijn verwerkersovereenkomsten gesloten.</p>
+        {{/if}}
+      </article>
+
+      <article class="card">
+        <h2>Doorgifte buiten de EU</h2>
+        <p>{{pages.privacy.third_countries_note|default:Er vindt geen doorgifte buiten de EU/EEA plaats, of alleen met passende waarborgen.}}</p>
+      </article>
+
+      <article class="card">
+        <h2>Jouw rechten</h2>
+        <p>{{pages.privacy.data_subject_rights_note|default:Je hebt het recht op inzage, correctie, verwijdering, beperking, dataportabiliteit en bezwaar.}}</p>
+        <p>Neem contact op via <a href="mailto:{{pages.privacy.controller_email}}">{{pages.privacy.controller_email}}</a> of het <a href="{{links.contact}}">contactformulier</a>.</p>
+        <p>Klacht? Neem contact op met ons, of dien een klacht in bij de Autoriteit Persoonsgegevens.</p>
+      </article>
+
+      {{#if pages.privacy.cookies_note}}
+      <article class="card">
+        <h2>Cookies</h2>
+        <p>{{pages.privacy.cookies_note}}</p>
+      </article>
+      {{/if}}
+    </div>
+
+    <div class="card" style="margin-top:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+      <a class="btn secondary" href="{{links.home}}">← Terug naar home</a>
+      <a class="btn" href="{{links.contact}}">Vragen? Neem contact op</a>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,45 @@
+<!--
+  Component: Hero
+  Schema: pages.home.hero
+  Placeholders used by agents:
+    - {{pages.home.hero.title}}
+    - {{pages.home.hero.subtitle}}
+    - {{pages.home.hero.cta_primary.label}}
+    - {{pages.home.hero.cta_primary.href}}
+    - {{pages.home.hero.cta_secondary.label}} (optional)
+    - {{pages.home.hero.cta_secondary.href}} (optional)
+    - {{site.assets.hero_image_url}} (optional)
+    - {{site.brand_name}}, {{site.primary_city}}, {{site.practice_type}}
+  Notes:
+    - Keep headline short (5–8 words) and empathetic.
+    - Subtitle should mention city or service scope (NL SEO).
+    - If no image, omit <figure> entirely.
+-->
+<section class="hero" aria-label="Intro">
+  <div class="container grid duo">
+    <div class="hero-copy">
+      <p class="eyebrow">{{site.practice_type|titlecase|default:Praktijk}}</p>
+      <h1>{{pages.home.hero.title}}</h1>
+      <p class="subtitle">
+        {{pages.home.hero.subtitle|default:Therapie en begeleiding in {{site.primary_city}}}}
+      </p>
+
+      <div class="hero-ctas">
+        <a class="btn" href="{{pages.home.hero.cta_primary.href|default:{{links.contact}}}}">
+          {{pages.home.hero.cta_primary.label|default:Afspraak maken}}
+        </a>
+        {{#if pages.home.hero.cta_secondary}}
+          <a class="btn secondary" href="{{pages.home.hero.cta_secondary.href}}">
+            {{pages.home.hero.cta_secondary.label}}
+          </a>
+        {{/if}}
+      </div>
+    </div>
+
+    {{#if site.assets.hero_image_url}}
+    <figure class="hero-media card">
+      <img src="{{site.assets.hero_image_url}}" alt="{{site.brand_name}} — praktijkbeeld" />
+    </figure>
+    {{/if}}
+  </div>
+</section>

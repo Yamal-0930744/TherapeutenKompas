@@ -1,0 +1,67 @@
+<!--
+  Component: FAQ / Veelgestelde vragen
+  Schema: pages.faq.qna[]
+  Placeholders used by agents:
+    - {{pages.faq.qna[].q}}
+    - {{pages.faq.qna[].a}}
+  Notes:
+    - Keep answers concise, warm, B1-level Dutch.
+    - Include topics: afspraak maken, duur, online, annuleren, bereikbaarheid, talen, privacy, vergoedingen.
+-->
+<section class="faq" aria-labelledby="faq-title">
+  <div class="container">
+    <h2 id="faq-title">Veelgestelde vragen</h2>
+
+    <div class="accordion">
+      {{#if pages.faq.qna}}
+        {{#each pages.faq.qna}}
+        <details class="card" aria-label="FAQ item">
+          <summary style="cursor:pointer;font-weight:600">{{q}}</summary>
+          <div class="faq-answer" style="margin-top:.6rem;color:#374151">
+            <p style="margin:0">{{{a}}}</p>
+          </div>
+        </details>
+        {{/each}}
+      {{else}}
+        <details class="card">
+          <summary>Hoe maak ik een afspraak?</summary>
+          <div class="faq-answer">
+            <p>Via het <a href="{{links.contact}}">contactformulier</a> of telefonisch.</p>
+          </div>
+        </details>
+        <details class="card">
+          <summary>Hoe lang duurt een sessie?</summary>
+          <div class="faq-answer"><p>Meestal 60 minuten.</p></div>
+        </details>
+        <details class="card">
+          <summary>Bied je online sessies?</summary>
+          <div class="faq-answer"><p>Ja, online via beeldbellen is mogelijk.</p></div>
+        </details>
+        <details class="card">
+          <summary>Kan ik annuleren of verzetten?</summary>
+          <div class="faq-answer"><p>Graag 24 uur van tevoren doorgeven.</p></div>
+        </details>
+        <details class="card">
+          <summary>Welke talen spreek je?</summary>
+          <div class="faq-answer"><p>Nederlands en Engels.</p></div>
+        </details>
+        <details class="card">
+          <summary>Wordt therapie vergoed?</summary>
+          <div class="faq-answer">
+            <p>Dat hangt af van je verzekering en registratie. Zie 
+              <a href="{{links.pricing}}">Tarieven & vergoeding</a>.
+            </p>
+          </div>
+        </details>
+        <details class="card">
+          <summary>Hoe ga je om met privacy?</summary>
+          <div class="faq-answer">
+            <p>We volgen de AVG. Lees de 
+              <a href="{{links.privacy}}">privacyverklaring</a>.
+            </p>
+          </div>
+        </details>
+      {{/if}}
+    </div>
+  </div>
+</section>

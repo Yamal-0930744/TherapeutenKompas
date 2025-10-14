@@ -1,0 +1,39 @@
+<!--
+  Component: Header / Navigation
+  Schema: site + links + features
+  Placeholders used by agents:
+    - {{site.brand_name}}
+    - {{site.assets.logo_url}}
+    - {{links.*}} (home, about, services, process, pricing, faq, blog, contact)
+    - {{site.cta.primary_label}}
+  Notes:
+    - Keep nav concise; blog is conditional.
+    - CTA defaults to Contact.
+-->
+<header class="site" role="banner" aria-label="Hoofd">
+  <div class="container row">
+    <a class="brand" href="{{links.home}}" style="display:flex;align-items:center;gap:10px">
+      <img src="{{site.assets.logo_url}}" alt="{{site.brand_name}}" class="logo" />
+      <strong>{{site.brand_name}}</strong>
+    </a>
+
+    <nav aria-label="Hoofdmenu">
+      <ul>
+        <li><a href="{{links.home}}">Home</a></li>
+        <li><a href="{{links.about}}">Over mij</a></li>
+        <li><a href="{{links.services}}">Therapie</a></li>
+        <li><a href="{{links.process}}">Werkwijze</a></li>
+        <li><a href="{{links.pricing}}">Tarieven</a></li>
+        <li><a href="{{links.faq}}">FAQ</a></li>
+        {{#if features.blog_enabled}}<li><a href="{{links.blog}}">Blog</a></li>{{/if}}
+        <li><a href="{{links.contact}}">Contact</a></li>
+      </ul>
+    </nav>
+
+    <div class="cta">
+      <a class="btn" href="{{links.contact}}">
+        {{site.cta.primary_label|default:Afspraak maken}}
+      </a>
+    </div>
+  </div>
+</header>

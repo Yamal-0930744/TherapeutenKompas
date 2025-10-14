@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{site.brand_name}} — {{pages.home.hero.title}}</title>
+  <meta name="description" content="{{meta.description|default:Therapie en begeleiding in {{site.primary_city}}}}" />
+  <link rel="canonical" href="/" />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+
+  <!-- =================== HEADER =================== -->
+  <header class="site" role="banner">
+    <div class="container row">
+      <div class="brand">
+        <img src="{{site.assets.logo_url}}" alt="{{site.brand_name}}" class="logo" />
+        <strong>{{site.brand_name}}</strong>
+      </div>
+      <nav aria-label="Hoofdmenu">
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/over.html">Over mij</a></li>
+          <li><a href="/therapie.html">Therapie</a></li>
+          <li><a href="/werkwijze.html">Werkwijze</a></li>
+          <li><a href="/tarieven.html">Tarieven</a></li>
+          <li><a href="/faq.html">FAQ</a></li>
+          {{#if features.blog_enabled}}<li><a href="/blog.html">Blog</a></li>{{/if}}
+          <li><a href="/contact.html">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="cta">
+        <a class="btn" href="{{site.cta.primary_url|default:/contact.html}}">
+          {{site.cta.primary_label|default:Afspraak maken}}
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- =================== HERO =================== -->
+    {% include "templates/components/hero.html" %}
+
+    <!-- =================== SERVICES OVERVIEW =================== -->
+    {% include "templates/components/services.html" %}
+
+    <!-- =================== ABOUT SNIPPET =================== -->
+    <section class="about-snippet" aria-labelledby="about-title">
+      <div class="container grid duo card">
+        <div>
+          <img src="{{pages.home.about_snippet.photo_url}}" alt="{{site.therapist_name}}" />
+        </div>
+        <div>
+          <h2 id="about-title">Over {{site.therapist_name}}</h2>
+          <p>{{pages.home.about_snippet.text|default:Ik ben {{site.therapist_name}}. In mijn praktijk in {{site.primary_city}} bied ik begeleiding bij o.a. stress en onzekerheid.}}</p>
+          <a class="btn secondary" href="{{pages.home.about_snippet.href|default:/over.html}}">Meer over mij</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================== CTA BAND =================== -->
+    <section class="cta-band" aria-label="Call to action">
+      <div class="container card cta-band-inner">
+        <div>
+          <h2>{{pages.home.cta_band.title|default:Klaar voor een eerste stap?}}</h2>
+          <p>Plan een vrijblijvend kennismakingsgesprek.</p>
+        </div>
+        <a class="btn" href="{{pages.home.cta_band.cta.href|default:/contact.html}}">
+          {{pages.home.cta_band.cta.label|default:Plan kennismaking}}
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- =================== FOOTER =================== -->
+  <footer role="contentinfo">
+    <div class="container grid footer-grid">
+      <section>
+        <strong>{{site.brand_name}}</strong>
+        <p>{{site.contact.address}}</p>
+        <p>Tel: <a href="tel:{{site.contact.phone}}">{{site.contact.phone}}</a><br>
+        Email: <a href="mailto:{{site.contact.email}}">{{site.contact.email}}</a></p>
+      </section>
+
+      <section>
+        <h3>Navigatie</h3>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/over.html">Over mij</a></li>
+          <li><a href="/therapie.html">Therapie</a></li>
+          <li><a href="/werkwijze.html">Werkwijze</a></li>
+          <li><a href="/tarieven.html">Tarieven</a></li>
+          <li><a href="/faq.html">FAQ</a></li>
+          {{#if features.blog_enabled}}<li><a href="/blog.html">Blog</a></li>{{/if}}
+          <li><a href="/privacy.html">Privacyverklaring</a></li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>Praktisch</h3>
+        <p>KVK: {{site.kvk_number}}<br>BTW: {{site.btw_number}}</p>
+        <p>{{site.legal.disclaimer|default:Geen crisisdienst. Bel 112 bij nood.}}</p>
+      </section>
+    </div>
+    <div class="container footer-legal">
+      <small>© {{now.year|default:2025}} {{site.brand_name}}. Alle rechten voorbehouden.</small>
+    </div>
+  </footer>
+
+</body>
+</html>

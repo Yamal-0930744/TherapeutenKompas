@@ -1,0 +1,69 @@
+<!--
+  Component/Partial: Blog List
+  Schema: pages.blog.list.items[]
+  Placeholders:
+    - {{pages.blog.list.items[].title}}
+    - {{pages.blog.list.items[].href}}
+    - {{pages.blog.list.items[].date_iso}} (YYYY-MM-DD)
+    - {{pages.blog.list.items[].excerpt}}
+    - {{pages.blog.list.items[].tags[]}} (optional)
+  Notes:
+    - Dates rendered locally for SEO can be preformatted by agent if needed.
+    - Uses {{links.blog}} only if you add “Back to blog” elsewhere.
+-->
+<section class="blog-list" aria-labelledby="blog-list-title">
+  <div class="container">
+    <h2 id="blog-list-title">Blog</h2>
+
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px">
+      {{#if pages.blog.list.items}}
+        {{#each pages.blog.list.items}}
+        <article class="card blog-card">
+          <header>
+            <h3 style="margin:.2rem 0">
+              <a href="{{href}}">{{title}}</a>
+            </h3>
+            {{#if date_iso}}
+              <time datetime="{{date_iso}}" style="font-size:.9rem;color:#6b7280">{{date_iso}}</time>
+            {{/if}}
+          </header>
+
+          {{#if excerpt}}
+            <p style="margin:.5rem 0 0 0">{{excerpt}}</p>
+          {{/if}}
+
+          {{#if tags}}
+          <ul style="list-style:none;padding:0;margin:.7rem 0 0 0;display:flex;gap:8px;flex-wrap:wrap">
+            {{#each tags}}
+              <li class="badge">{{this}}</li>
+            {{/each}}
+          </ul>
+          {{/if}}
+
+          <div style="margin-top:10px">
+            <a class="btn secondary" href="{{href}}" aria-label="Lees {{title}}">Lees meer</a>
+          </div>
+        </article>
+        {{/each}}
+      {{else}}
+        <article class="card blog-card">
+          <h3 style="margin:.2rem 0"><a href="#">Voorbeeldartikel</a></h3>
+          <time datetime="2025-01-01" style="font-size:.9rem;color:#6b7280">2025-01-01</time>
+          <p style="margin:.5rem 0 0 0">Korte samenvatting van het artikel. Handig voor lezers én SEO.</p>
+          <div style="margin-top:10px">
+            <a class="btn secondary" href="#">Lees meer</a>
+          </div>
+        </article>
+      {{/if}}
+    </div>
+
+    <!-- Optional pagination -->
+    {{#if pages.blog.pagination}}
+    <nav class="card" aria-label="Paginering" style="margin-top:16px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+      <a class="btn secondary" href="{{pages.blog.pagination.prev_href}}" aria-disabled="{{^pages.blog.pagination.prev_href}}true{{/pages.blog.pagination.prev_href}}">← Vorige</a>
+      <span style="color:#6b7280">Pagina {{pages.blog.pagination.page}} van {{pages.blog.pagination.total}}</span>
+      <a class="btn secondary" href="{{pages.blog.pagination.next_href}}" aria-disabled="{{^pages.blog.pagination.next_href}}true{{/pages.blog.pagination.next_href}}">Volgende →</a>
+    </nav>
+    {{/if}}
+  </div>
+</section>

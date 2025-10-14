@@ -1,0 +1,65 @@
+<!--
+  Component: Testimonials / Ervaringen
+  Schema: pages.testimonials
+  Placeholders used by agents:
+    - {{pages.testimonials.title}}
+    - {{pages.testimonials.quotes[].text}}
+    - {{pages.testimonials.quotes[].name}}        (optional)
+    - {{pages.testimonials.quotes[].role}}        (optional)
+    - {{pages.testimonials.quotes[].photo_url}}   (optional)
+    - {{pages.testimonials.cta.label}}            (optional)
+    - {{pages.testimonials.cta.href}}             (optional; defaults to {{links.contact}})
+  Notes:
+    - Keep quotes short (≤ 35–50 words).
+    - No sensitive or identifying details without explicit consent.
+-->
+<section class="testimonials" aria-labelledby="testi-title">
+  <div class="container">
+    <h2 id="testi-title">
+      {{pages.testimonials.title|default:Ervaringen}}
+    </h2>
+
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px">
+      {{#if pages.testimonials.quotes}}
+        {{#each pages.testimonials.quotes}}
+        <figure class="card" aria-label="Ervaring">
+          {{#if photo_url}}
+            <img src="{{photo_url}}" alt="{{name}}" style="width:56px;height:56px;object-fit:cover;border-radius:999px;margin-bottom:.6rem" />
+          {{/if}}
+          <blockquote cite="" style="margin:0">
+            <p style="margin:0">“{{text}}”</p>
+          </blockquote>
+          {{#if name}}
+          <figcaption style="margin-top:.6rem;color:#6b7280">
+            — {{name}}{{#if role}}, <span class="muted">{{role}}</span>{{/if}}
+          </figcaption>
+          {{/if}}
+        </figure>
+        {{/each}}
+      {{else}}
+        <figure class="card">
+          <blockquote cite="" style="margin:0">
+            <p style="margin:0">“Ik voelde me snel op mijn gemak en merk echt verschil in het dagelijks leven.”</p>
+          </blockquote>
+          <figcaption style="margin-top:.6rem;color:#6b7280">— Cliënt uit {{site.primary_city}}</figcaption>
+        </figure>
+        <figure class="card">
+          <blockquote cite="" style="margin:0">
+            <p style="margin:0">“Heldere uitleg en praktische oefeningen die meteen helpen.”</p>
+          </blockquote>
+          <figcaption style="margin-top:.6rem;color:#6b7280">— Anoniem</figcaption>
+        </figure>
+      {{/if}}
+    </div>
+
+    <!-- Optional CTA -->
+    {{#if pages.testimonials.cta}}
+    <div class="card" style="margin-top:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+      <p style="margin:0;color:#6b7280">Klaar voor een eerste stap?</p>
+      <a class="btn" href="{{pages.testimonials.cta.href|default:{{links.contact}}}}">
+        {{pages.testimonials.cta.label|default:Plan kennismaking}}
+      </a>
+    </div>
+    {{/if}}
+  </div>
+</section>

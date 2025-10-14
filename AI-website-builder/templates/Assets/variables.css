@@ -1,0 +1,20 @@
+:root{
+  /* colors */
+  --clr-bg: #FAFAFA;
+  --clr-text: #1f2937;     /* slate-800 */
+  --clr-muted: #6b7280;    /* slate-500/600 */
+  --clr-primary: #2563eb;  /* blue-600 */
+  --clr-accent: #d97706;   /* amber-700 */
+
+  /* layout */
+  --radius: 14px;
+  --max-w: 1080px;
+  --shadow-0: 0 1px 0 rgba(0,0,0,.03);
+  --border-0: 1px solid #e5e7eb;
+
+  /* footer */
+  --footer-bg: #0b1220;
+  --footer-text: #cbd5e1;
+  --footer-link: #93c5fd;
+  --footer-muted: #9ca3af;
+}

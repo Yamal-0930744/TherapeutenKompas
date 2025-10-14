@@ -1,0 +1,11 @@
+{
+  "home": "/",
+  "about": "/about",
+  "services": "/therapie",
+  "process": "/werkwijze",
+  "pricing": "/tarieven",
+  "faq": "/faq",
+  "blog": "/blog",
+  "contact": "/contact",
+  "privacy": "/privacy"
+}

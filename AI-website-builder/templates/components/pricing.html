@@ -1,0 +1,87 @@
+<!--
+  Component: Tarieven & Vergoeding
+  Schema: pages.pricing
+  Placeholders used by agents:
+    - {{pages.pricing.items[].label}}
+    - {{pages.pricing.items[].price_eur_incl_vat}}
+    - {{pages.pricing.items[].duration_min}}
+    - {{pages.pricing.items[].notes}}
+    - {{pages.pricing.reimbursement_notes}}
+    - {{pages.pricing.cancellation_policy}}
+    - {{pages.pricing.payment_methods[]}}
+  Notes:
+    - Prices must be shown **incl. BTW** when applicable (NL consumer law).
+    - Keep tone calm, factual; avoid justifications.
+-->
+<section class="pricing" aria-labelledby="pricing-title">
+  <div class="container">
+    <h2 id="pricing-title">Tarieven & vergoeding</h2>
+
+    <!-- Pricing table/cards -->
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px">
+      {{#if pages.pricing.items}}
+        {{#each pages.pricing.items}}
+        <article class="card price-card" aria-label="{{label}}">
+          <header style="display:flex;align-items:baseline;justify-content:space-between;gap:8px">
+            <h3 style="margin:0">{{label}}</h3>
+            <div style="font-weight:700">
+              €{{price_eur_incl_vat}} 
+              <small style="font-weight:500;color:#6b7280">incl. BTW</small>
+            </div>
+          </header>
+          <p style="margin:.4rem 0 .2rem 0;color:#6b7280">Duur: {{duration_min}} min</p>
+          {{#if notes}}<p class="muted" style="margin:.2rem 0 0 0">{{notes}}</p>{{/if}}
+        </article>
+        {{/each}}
+      {{else}}
+        <article class="card price-card">
+          <header style="display:flex;align-items:baseline;justify-content:space-between;gap:8px">
+            <h3 style="margin:0">Sessie (60 min)</h3>
+            <div style="font-weight:700">
+              €90 <small style="font-weight:500;color:#6b7280">incl. BTW</small>
+            </div>
+          </header>
+          <p style="margin:.4rem 0 .2rem 0;color:#6b7280">Duur: 60 min</p>
+          <p class="muted" style="margin:.2rem 0 0 0">Particulier tarief</p>
+        </article>
+      {{/if}}
+    </div>
+
+    <!-- Payment methods chips -->
+    {{#if pages.pricing.payment_methods}}
+    <div class="card" style="margin-top:14px">
+      <strong>Betaalmethoden</strong>
+      <ul style="list-style:none;padding:0;margin:8px 0;display:flex;gap:10px;flex-wrap:wrap">
+        {{#each pages.pricing.payment_methods}}
+        <li class="badge" style="border:1px solid #e5e7eb;border-radius:999px;padding:.3rem .6rem">{{this}}</li>
+        {{/each}}
+      </ul>
+    </div>
+    {{/if}}
+
+    <!-- Reimbursement & cancellation -->
+    <div class="grid" style="margin-top:14px">
+      {{#if pages.pricing.reimbursement_notes}}
+      <article class="card">
+        <h3 style="margin-top:0">Vergoeding</h3>
+        <p>{{pages.pricing.reimbursement_notes}}</p>
+      </article>
+      {{/if}}
+
+      {{#if pages.pricing.cancellation_policy}}
+      <article class="card">
+        <h3 style="margin-top:0">Annuleren</h3>
+        <p>{{pages.pricing.cancellation_policy}}</p>
+      </article>
+      {{/if}}
+    </div>
+
+    <!-- CTA -->
+    <div class="card" style="margin-top:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+      <p style="margin:0;color:#6b7280">
+        Vragen over tarieven of vergoedingen? Neem gerust contact op.
+      </p>
+      <a class="btn" href="{{links.contact}}">Contact opnemen</a>
+    </div>
+  </div>
+</section>

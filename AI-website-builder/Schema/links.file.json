@@ -1,0 +1,11 @@
+{
+  "home": "../index.html",
+  "about": "components/about.html",
+  "services": "components/services.html",
+  "process": "components/process.html",
+  "pricing": "components/pricing.html",
+  "faq": "components/faq.html",
+  "blog": "components/blog.html",
+  "contact": "components/contact.html",
+  "privacy": "components/privacy.html"
+}

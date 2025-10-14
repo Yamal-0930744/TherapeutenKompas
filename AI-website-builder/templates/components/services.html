@@ -1,0 +1,54 @@
+<!--
+  Component: Services / Therapie
+  Schema: pages.services.items[]
+  Placeholders used by agents:
+    - {{pages.services.intro_title}}
+    - {{pages.services.intro_text}}
+    - {{pages.services.items[].title}}
+    - {{pages.services.items[].summary}}
+    - {{pages.services.items[].href}}
+  Notes:
+    - Highlight 3–6 main themes or problems you help with.
+    - Each item links to a detail page or anchor.
+-->
+<section class="services" aria-labelledby="services-title">
+  <div class="container">
+    <h2 id="services-title">{{pages.services.intro_title|default:Waar ik bij help}}</h2>
+    <p class="muted" style="max-width:65ch;color:#6b7280">
+      {{pages.services.intro_text|default:Therapie en begeleiding bij persoonlijke groei, stress, angst en relaties.}}
+    </p>
+
+    <div class="grid services-grid" style="margin-top:1rem">
+      {{#if pages.services.items}}
+        {{#each pages.services.items}}
+        <article class="card service-card" aria-label="{{title}}">
+          <h3>{{title}}</h3>
+          <p>{{summary}}</p>
+          {{#if href}}
+            <a class="btn secondary" href="{{href}}">Lees meer</a>
+          {{/if}}
+        </article>
+        {{/each}}
+      {{else}}
+        <article class="card service-card">
+          <h3>Stress en spanning</h3>
+          <p>Leer beter omgaan met spanning en overbelasting in werk of privé.</p>
+        </article>
+        <article class="card service-card">
+          <h3>Zelfvertrouwen</h3>
+          <p>Werk aan meer zelfvertrouwen en een positiever zelfbeeld.</p>
+        </article>
+        <article class="card service-card">
+          <h3>Relaties en communicatie</h3>
+          <p>Verbeter je relaties en leer open en duidelijk communiceren.</p>
+        </article>
+      {{/if}}
+    </div>
+
+    <!-- CTA band -->
+    <div class="card" style="margin-top:18px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+      <p style="margin:0;color:#6b7280">Nieuwsgierig of mijn aanpak past bij jou?</p>
+      <a class="btn" href="{{links.contact}}">Plan een kennismaking</a>
+    </div>
+  </div>
+</section>

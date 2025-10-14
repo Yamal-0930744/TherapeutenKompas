@@ -1,0 +1,92 @@
+<!--
+  Component: Contact / Afspraak maken
+  Schema: pages.contact
+  Placeholders used by agents:
+    - {{pages.contact.lead_text}}
+    - {{pages.contact.form.action}} (optional; defaults to '#')
+    - {{pages.contact.form.method}} (optional; defaults to 'POST')
+    - {{pages.contact.form.consent_text}}
+    - {{pages.contact.form.privacy_url}}
+    - {{pages.contact.alt_contacts.email}}
+    - {{pages.contact.alt_contacts.phone}}
+    - {{pages.contact.map_embed_url}} (optional)
+  Notes:
+    - GDPR/AVG: consent checkbox REQUIRED to submit.
+    - Keep fields minimal to reduce friction.
+    - Do not collect sensitive health data in this form.
+-->
+<section class="contact" aria-labelledby="contact-title">
+  <div class="container grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px">
+
+    <article class="card" style="order:1">
+      <h2 id="contact-title">Neem contact op</h2>
+      <p class="muted" style="color:#6b7280">{{pages.contact.lead_text|default:Alle gesprekken zijn vertrouwelijk.}}</p>
+
+      <form class="contact-form" action="{{pages.contact.form.action|default:#}}" method="{{pages.contact.form.method|default:POST}}" novalidate>
+        <div class="grid" style="grid-template-columns:1fr 1fr;gap:12px">
+          <div class="field" style="grid-column:span 1">
+            <label for="name">Naam</label>
+            <input id="name" name="name" type="text" placeholder="Je naam" required>
+          </div>
+          <div class="field" style="grid-column:span 1">
+            <label for="email">E-mail</label>
+            <input id="email" name="email" type="email" placeholder="jij@voorbeeld.nl" required>
+          </div>
+          <div class="field" style="grid-column:span 1">
+            <label for="phone">Telefoon <span class="muted" style="font-weight:400">(optioneel)</span></label>
+            <input id="phone" name="phone" type="tel" placeholder="+31 6 12345678" pattern="^\+?[0-9\s-]{6,}$">
+          </div>
+          <div class="field" style="grid-column:span 1">
+            <label for="topic">Onderwerp <span class="muted" style="font-weight:400">(optioneel)</span></label>
+            <select id="topic" name="topic">
+              <option value="">Maak een keuze…</option>
+              <option value="kennismaking">Kennismakingsgesprek</option>
+              <option value="vraag">Vraag</option>
+              <option value="afspraak">Afspraak verzetten</option>
+            </select>
+          </div>
+          <div class="field" style="grid-column:1/-1">
+            <label for="message">Bericht</label>
+            <textarea id="message" name="message" rows="6" placeholder="Vertel kort waar je naar op zoek bent" required></textarea>
+          </div>
+        </div>
+
+        <!-- Consent (AVG) -->
+        <div class="field" style="margin-top:10px">
+          <label style="display:flex;align-items:flex-start;gap:8px">
+            <input id="consent" name="consent" type="checkbox" required>
+            <span>
+              {{pages.contact.form.consent_text|default:Ik ga akkoord met de verwerking van mijn gegevens volgens de <a href="{{pages.contact.form.privacy_url|default:{{links.privacy}}}}">privacyverklaring</a>.}}
+            </span>
+          </label>
+        </div>
+
+        <div style="margin-top:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <button class="btn" type="submit">Versturen</button>
+          <p class="muted" style="margin:0;color:#6b7280">We reageren zo snel mogelijk.</p>
+        </div>
+      </form>
+
+      <!-- Alternate contact methods -->
+      <div class="card" style="margin-top:14px">
+        <strong>Liever direct contact?</strong>
+        <p style="margin:.3rem 0 0 0">
+          E-mail: <a href="mailto:{{pages.contact.alt_contacts.email}}">{{pages.contact.alt_contacts.email}}</a><br>
+          Telefoon: <a href="tel:{{pages.contact.alt_contacts.phone}}">{{pages.contact.alt_contacts.phone}}</a>
+        </p>
+      </div>
+    </article>
+
+    <!-- Map / Location (optional) -->
+    {{#if pages.contact.map_embed_url}}
+    <aside class="card" style="order:2">
+      <h3 style="margin-top:0">Locatie</h3>
+      <div class="map-wrap" style="aspect-ratio:4/3;border-radius:12px;overflow:hidden">
+        <iframe src="{{pages.contact.map_embed_url}}" width="100%" height="100%" style="border:0" loading="lazy" referrerpolicy="no-referrer-when-downgrade" aria-label="Kaart"></iframe>
+      </div>
+      <p class="muted" style="margin:.5rem 0 0 0;color:#6b7280">Plan je route met OV of auto. Parkeren in de buurt mogelijk.</p>
+    </aside>
+    {{/if}}
+
+  </div>
+</section>

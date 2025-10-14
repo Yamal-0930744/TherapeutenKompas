@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{site.brand_name}} — {{pages.home.hero.title}}</title>
+  <meta name="description" content="{{meta.description|default:Therapie en begeleiding in {{site.primary_city}}}}" />
+  <link rel="canonical" href="{{links.home}}" />
+  <link rel="stylesheet" href="Assets/style.css" />
+  <link rel="stylesheet" href="Assets/variables.css">
+</head>
+<body>
+  <a class="sr-only" href="#main">Ga naar inhoud</a>
+
+  <!-- =================== HEADER / NAV =================== -->
+  <header class="site" role="banner" aria-label="Hoofd">
+    <div class="container row">
+      <div class="brand" style="display:flex;align-items:center;gap:10px">
+        <img src="{{site.assets.logo_url}}" alt="{{site.brand_name}}" style="height:34px;width:auto" />
+        <strong>{{site.brand_name}}</strong>
+      </div>
+      <nav aria-label="Hoofdmenu">
+        <ul>
+          <li><a href="{{links.home}}">Home</a></li>
+          <li><a href="{{links.about}}">Over mij</a></li>
+          <li><a href="{{links.services}}">Therapie</a></li>
+          <li><a href="{{links.process}}">Werkwijze</a></li>
+          <li><a href="{{links.pricing}}">Tarieven</a></li>
+          <li><a href="{{links.faq}}">FAQ</a></li>
+          {{#if features.blog_enabled}}<li><a href="{{links.blog}}">Blog</a></li>{{/if}}
+          <li><a href="{{links.contact}}">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="cta">
+        <a class="btn" href="{{links.contact}}">{{site.cta.primary_label|default:Afspraak maken}}</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- =================== HERO =================== -->
+    <section class="hero">
+      <div class="container grid duo">
+        <div>
+          <p class="eyebrow" style="color:var(--clr-accent);font-weight:600">{{site.practice_type|titlecase|default:Praktijk}}</p>
+          <h1 data-field="pages.home.hero.title">{{pages.home.hero.title}}</h1>
+          <p data-field="pages.home.hero.subtitle">{{pages.home.hero.subtitle|default:Therapie en coaching in {{site.primary_city}}}}</p>
+          <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+            <a class="btn" href="{{pages.home.hero.cta_primary.href|default:{{links.contact}}}}">{{pages.home.hero.cta_primary.label|default:Afspraak maken}}</a>
+            {{#if pages.home.hero.cta_secondary}}
+              <a class="btn secondary" href="{{pages.home.hero.cta_secondary.href}}">{{pages.home.hero.cta_secondary.label}}</a>
+            {{/if}}
+          </div>
+        </div>
+        <div>
+          <img src="{{site.assets.hero_image_url}}" alt="{{site.brand_name}}" class="card" />
+        </div>
+      </div>
+    </section>
+
+    <div class="sections">
+      <!-- =================== INTRO =================== -->
+      <section aria-labelledby="intro-title">
+        <div class="container card">
+          <h2 id="intro-title">{{pages.home.intro.heading|default:Loop je vast?}}</h2>
+          <p>{{pages.home.intro.paragraphs[0]|default:Soms is het veel. Je hoeft het niet alleen te doen.}}</p>
+          {{#if pages.home.intro.bullets}}
+            <ul>
+              {{#each pages.home.intro.bullets}}
+                <li>{{this}}</li>
+              {{/each}}
+            </ul>
+          {{/if}}
+        </div>
+      </section>
+
+      <!-- =================== SERVICES OVERVIEW =================== -->
+      <section aria-labelledby="services-title">
+        <div class="container">
+          <h2 id="services-title">Waar ik bij help</h2>
+          <div class="grid services-grid">
+            {{#each pages.home.services_overview.items}}
+            <article class="card" aria-label="Service kaart">
+              <h3>{{title}}</h3>
+              <p>{{short}}</p>
+              <a class="btn secondary" href="{{href}}" aria-label="Lees meer over {{title}}">Lees meer</a>
+            </article>
+            {{/each}}
+          </div>
+        </div>
+      </section>
+
+      <!-- =================== ABOUT SNIPPET =================== -->
+      <section aria-labelledby="about-snippet-title">
+        <div class="container grid duo card">
+          <div>
+            <img src="{{pages.home.about_snippet.photo_url}}" alt="{{site.therapist_name}}" style="border-radius:12px" />
+          </div>
+          <div>
+            <h2 id="about-snippet-title">Over {{site.therapist_name}}</h2>
+            <p>{{pages.home.about_snippet.text|default:Ik ben {{site.therapist_name}}. In mijn praktijk in {{site.primary_city}} bied ik begeleiding bij o.a. stress en onzekerheid.}}</p>
+            <a class="btn secondary" href="{{pages.home.about_snippet.href|default:{{links.about}}}}">Meer over mij</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================== TESTIMONIALS (optional) =================== -->
+      {{#if pages.home.testimonials.quotes}}
+      <section aria-labelledby="testi-title">
+        <div class="container">
+          <h2 id="testi-title">Ervaringen</h2>
+          <div class="grid">
+            {{#each pages.home.testimonials.quotes}}
+              <blockquote class="card" cite="">
+                <p style="margin:0">“{{text}}”</p>
+                {{#if attribution}}<footer style="margin-top:8px;color:var(--clr-muted)">— {{attribution}}</footer>{{/if}}
+              </blockquote>
+            {{/each}}
+          </div>
+        </div>
+      </section>
+      {{/if}}
+
+      <!-- =================== CTA BAND =================== -->
+      <section aria-label="Call to action">
+        <div class="container card" style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+          <div>
+            <h2 style="margin:0">{{pages.home.cta_band.title|default:Klaar voor een eerste stap?}}</h2>
+            <p style="margin:.3rem 0;color:var(--clr-muted)">Plan een vrijblijvend kennismakingsgesprek.</p>
+          </div>
+          <a class="btn" href="{{pages.home.cta_band.cta.href|default:{{links.contact}}}}">{{pages.home.cta_band.cta.label|default:Plan kennismaking}}</a>
+        </div>
+      </section>
+    </div>
+
+  </main>
+
+  <!-- =================== FOOTER =================== -->
+  <footer role="contentinfo">
+    <div class="container grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:22px">
+      <section>
+        <strong>{{site.brand_name}}</strong>
+        <p class="legal">{{site.contact.address}}</p>
+        <p class="legal">Tel: <a href="tel:{{site.contact.phone}}">{{site.contact.phone}}</a><br>Email: <a href="mailto:{{site.contact.email}}">{{site.contact.email}}</a></p>
+      </section>
+      <section>
+        <h3 style="margin-top:0">Navigatie</h3>
+        <ul style="list-style:none;padding:0;margin:0;line-height:1.9">
+          <li><a href="{{links.home}}">Home</a></li>
+          <li><a href="{{links.about}}">Over mij</a></li>
+          <li><a href="{{links.services}}">Therapie</a></li>
+          <li><a href="{{links.process}}">Werkwijze</a></li>
+          <li><a href="{{links.pricing}}">Tarieven</a></li>
+          <li><a href="{{links.faq}}">FAQ</a></li>
+          {{#if features.blog_enabled}}<li><a href="{{links.blog}}">Blog</a></li>{{/if}}
+          <li><a href="{{links.privacy}}">Privacyverklaring</a></li>
+        </ul>
+      </section>
+      <section>
+        <h3 style="margin-top:0">Praktisch</h3>
+        <p class="legal">KVK: {{site.kvk_number}}<br>BTW: {{site.btw_number}}</p>
+        <p class="legal">{{site.legal.disclaimer|default:Geen crisisdienst. Bel 112 bij nood.}}</p>
+      </section>
+    </div>
+    <div class="container legal" style="border-top:1px solid #1f2937;margin-top:12px;padding-top:12px">
+      <small>© <span data-bind="year">{{now.year|default:2025}}</span> {{site.brand_name}}. Alle rechten voorbehouden.</small>
+    </div>
+  </footer>
+
+  <!-- Runtime link mapper for preview mode (templates/* → ../Schema/links.file.json) -->
+  <script>
+  (async () => {
+    try {
+      const res = await fetch('../Schema/links.file.json');
+      if (!res.ok) throw new Error('links.file.json not found');
+      const LINKS = await res.json();
+
+      const replaceLinkTokens = (val) =>
+        val.replace(/\{\{links\.([a-z]+)\}\}/g, (_, k) => LINKS[k] || '#');
+
+      const coerceDefaultIfTemplated = (val) => {
+        // If the attribute still contains templating syntax, try to use its default.
+        // e.g. "{{pages....|default:contact.html}}" -> "contact.html"
+        const m = val.match(/\|default:([^}]+)\}\}/);
+        if (m) return m[1].trim().replace(/^['"]|['"]$/g, '');
+        return val;
+      };
+
+      document.querySelectorAll('*').forEach(el => {
+        const attrs = el.getAttributeNames?.() || [];
+        attrs.forEach(name => {
+          const v = el.getAttribute(name);
+          if (!v) return;
+          if (v.includes('{{links.')) {
+            let newVal = replaceLinkTokens(v);
+            if (newVal.includes('{{')) newVal = coerceDefaultIfTemplated(newVal);
+            el.setAttribute(name, newVal);
+          }
+        });
+      });
+    } catch (e) {
+      console.warn('Link mapping skipped:', e.message);
+    }
+  })();
+  </script>
+
+  <!-- Notes for AI agents
+    Links are abstracted via {{links.*}} so you can switch between:
+      - local file mode (index.html, contact.html, ...)
+      - pretty URL mode (/contact, /over, ...)
+    Provide /Schema/links.file.json or /Schema/links.pretty.json and merge at fill time.
+  -->
+</body>
+</html>
