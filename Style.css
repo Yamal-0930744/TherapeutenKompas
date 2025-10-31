@@ -1094,3 +1094,29 @@ video {
     max-width: 360px;
   }
 }
+
+/* PLATFORM-INFO (checklist variant) — make room so text + CTA fit */
+#platform-info.is-checklist {
+  height: auto;               /* stop forcing 75vh */
+  min-height: 90vh;           /* plenty of room on larger screens */
+  padding: 6vh 20px 10vh;     /* extra bottom space for the button */
+}
+
+#platform-info.is-checklist .visibility-container {
+  margin-top: 0;              /* remove the global 10vh push-down */
+  gap: 40px;                  /* tidy spacing between text and image */
+  align-items: center;
+}
+
+#platform-info.is-checklist .visibility-text h2 { margin-bottom: 6px; }
+#platform-info.is-checklist .visibility-text p  { margin-bottom: 12px; }
+#platform-info.is-checklist .buttons            { padding-top: 12px; }
+
+/* Inline UL margin wins; override it so the CTA doesn't drop */
+#platform-info.is-checklist .visibility-text ul { margin-bottom: 16px !important; }
+
+/* Keep the image from hogging vertical space */
+#platform-info.is-checklist .visibility-image img {
+  max-height: 480px;
+  object-fit: contain;
+}

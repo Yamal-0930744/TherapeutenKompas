@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Praktijk FitBrein — Meer rust, focus en balans</title>
+  <meta name="description" content="Neurofeedback braintraining voor meer rust, focus en balans — natuurlijk en ontspannen, zonder te presteren." />
+  <link rel="canonical" href="/" />
+  <link rel="stylesheet" href="./Assets/style.css" />
+  <link rel="stylesheet" href="./Assets/variables.css" />
+<body>
+
+  <!-- =================== HEADER =================== -->
+  <header class="site" role="banner">
+    <div class="container row">
+      <div class="brand">
+        <img src="TODO_LOGO_URL" alt="Praktijk FitBrein" class="logo" />
+        <strong>Praktijk FitBrein</strong>
+      </div>
+      <nav aria-label="Hoofdmenu">
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/over.html">Over mij</a></li>
+          <li><a href="/therapie.html">Therapie</a></li>
+          <li><a href="/werkwijze.html">Werkwijze</a></li>
+          <li><a href="/tarieven.html">Tarieven</a></li>
+          <li><a href="/faq.html">FAQ</a></li>
+          {{#if features.blog_enabled}}<li><a href="/blog.html">Blog</a></li>{{/if}}
+          <li><a href="/contact.html">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="cta">
+        <a class="btn" href="{{site.cta.primary_url|default:/contact.html}}">
+          {{site.cta.primary_label|default:Afspraak maken}}
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- =================== HERO =================== -->
+    {% include "templates/components/hero.html" %}
+
+    <!-- =================== SERVICES OVERVIEW =================== -->
+    {% include "templates/components/services.html" %}
++
+    <!-- =================== ABOUT SNIPPET =================== -->
+    <section class="about-snippet" aria-labelledby="about-title">
+      <div class="container grid duo card">
+        <div>
+          <img src="TODO_HEADSHOT_URL" alt="Pauline Kerkvliet" />
+        </div>
+        <div>
+          <h2 id="about-title">Over Pauline Kerkvliet</h2>
+          <p>Ik ben Pauline Kerkvliet. Na een ingrijpende hersenoperatie hield ik langdurig klachten zoals vermoeidheid, hoofdpijn, slecht slapen en concentratieproblemen. Braintraining veranderde alles: eerst verbeterde mijn slaap, daarna volgden energie, helderheid en plezier. Die ervaring raakte me zo dat ik nu anderen begeleid naar meer rust en veerkracht — op een persoonlijke, praktische en ontspannen manier.</p>
+          <a class="btn secondary" href="{{pages.home.about_snippet.href|default:/over.html}}">Meer over mij</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================== CTA BAND =================== -->
+    <section class="cta-band" aria-label="Call to action">
+      <div class="container card cta-band-inner">
+        <div>
+          <h2>{{pages.home.cta_band.title|default:Klaar voor een eerste stap?}}</h2>
+          <p>Plan een vrijblijvend kennismakingsgesprek.</p>
+        </div>
+        <a class="btn" href="{{pages.home.cta_band.cta.href|default:/contact.html}}">
+          {{pages.home.cta_band.cta.label|default:Plan kennismaking}}
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- =================== FOOTER =================== -->
+  <footer role="contentinfo">
+    <div class="container grid footer-grid">
+      <section>
+        <strong>Praktijk FitBrein</strong>
+        <p>TODO_ADDRESS</p>
+        <p>Tel: <a href="tel:TODO_PHONE">TODO_PHONE</a><br>
+        Email: <a href="mailto:TODO_EMAIL">TODO_EMAIL</a></p>
+      </section>
+
+      <section>
+        <h3>Navigatie</h3>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/over.html">Over mij</a></li>
+          <li><a href="/therapie.html">Therapie</a></li>
+          <li><a href="/werkwijze.html">Werkwijze</a></li>
+          <li><a href="/tarieven.html">Tarieven</a></li>
+          <li><a href="/faq.html">FAQ</a></li>
+          {{#if features.blog_enabled}}<li><a href="/blog.html">Blog</a></li>{{/if}}
+          <li><a href="/privacy.html">Privacyverklaring</a></li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>Praktisch</h3>
+        <p>KVK: TODO_KVK<br>BTW: TODO_BTW</p>
+        <p>Geen crisisdienst. Bel 112 bij nood.</p>
+      </section>
+    </div>
+    <div class="container footer-legal">
+      <small>© 2025 Praktijk FitBrein. Alle rechten voorbehouden.</small>
+    </div>
+  </footer>
+
+</body>
+</html>

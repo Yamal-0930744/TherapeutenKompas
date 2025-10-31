@@ -1,0 +1,31 @@
+<!-- Component: Footer (copied) -->
++<footer role="contentinfo">
++  <div class="container grid footer-grid">
++    <section>
++      <strong>{{site.brand_name}}</strong>
++      <p class="legal">{{site.contact.address}}</p>
++      <p class="legal">Tel: <a href="tel:{{site.contact.phone}}">{{site.contact.phone}}</a><br>Email: <a href="mailto:{{site.contact.email}}">{{site.contact.email}}</a></p>
++    </section>
++    <section>
++      <h3 style="margin-top:0">Navigatie</h3>
++      <ul style="list-style:none;padding:0;margin:0;line-height:1.9">
++        <li><a href="{{links.home}}">Home</a></li>
++        <li><a href="{{links.about}}">Over mij</a></li>
++        <li><a href="{{links.services}}">Therapie</a></li>
++        <li><a href="{{links.process}}">Werkwijze</a></li>
++        <li><a href="{{links.pricing}}">Tarieven</a></li>
++        <li><a href="{{links.faq}}">FAQ</a></li>
++        {{#if features.blog_enabled}}<li><a href="{{links.blog}}">Blog</a></li>{{/if}}
++        <li><a href="{{links.privacy}}">Privacyverklaring</a></li>
++      </ul>
++    </section>
++    <section>
++      <h3 style="margin-top:0">Praktisch</h3>
++      <p class="legal">KVK: TODO_KVK<br>BTW: TODO_BTW</p>
++      <p class="legal">Geen crisisdienst. Bel 112 bij nood.</p>
++    </section>
++  </div>
++  <div class="container footer-legal"><small>© <span id="year">2025</span> {{site.brand_name}}. Alle rechten voorbehouden.</small></div>
++  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
++</footer>
++

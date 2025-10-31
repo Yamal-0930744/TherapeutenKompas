@@ -1,0 +1,26 @@
+<!doctype html>
++<html lang="nl">
++<head>
++  <meta charset="utf-8" />
++  <meta name="viewport" content="width=device-width, initial-scale=1" />
++  <title>{{site.brand_name}} — {{pages.home.hero.title}}</title>
++  <meta name="description" content="{{meta.description|default:Therapie en begeleiding in {{site.primary_city}}}}" />
++  <link rel="canonical" href="{{links.home}}" />
++  <link rel="stylesheet" href="Assets/style.css" />
++  <link rel="stylesheet" href="Assets/variables.css">
++</head>
++<body>
++  <a class="sr-only" href="#main">Ga naar inhoud</a>
++  <!-- header include -->
++  {% include "templates/components/header.html" %}
++  <main id="main">
++    {% include "templates/components/hero.html" %}
++    {% include "templates/components/services.html" %}
++    {% include "templates/components/about.html" %}
++    {% include "templates/components/testimonial.html" %}
++    {% include "templates/components/faq.html" %}
++  </main>
++  {% include "templates/components/footer.html" %}
++</body>
++</html>
++

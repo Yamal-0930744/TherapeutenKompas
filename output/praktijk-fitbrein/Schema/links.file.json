@@ -1,0 +1,11 @@
+{
+	"home": "../index.html",
+	"about": "templates/components/about.html",
+	"services": "templates/components/services.html",
+	"process": "templates/components/process.html",
+	"pricing": "templates/components/pricing.html",
+	"faq": "templates/components/faq.html",
+	"blog": "templates/components/blog.html",
+	"contact": "templates/components/contact.html",
+	"privacy": "templates/Partials/privacy.html"
+}
